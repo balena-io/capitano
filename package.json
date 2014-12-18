@@ -1,0 +1,45 @@
+{
+  "name": "capitano",
+  "version": "1.0.0",
+  "description": "Powerful, non opitionated command line parser for serious applications",
+  "main": "build/capitano.js",
+  "homepage": "https://github.com/resin-io/capitano",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/resin-io/capitano.git"
+  },
+  "keywords": [
+    "cli",
+    "command",
+    "option",
+    "parser",
+    "git",
+    "prompt"
+  ],
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "gulp test",
+    "prepublish": "gulp build"
+  },
+  "author": "Juan Cruz Viotti <juanchiviotti@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "~1.10.0",
+    "coffee-script": "~1.8.0",
+    "gulp": "~3.8.10",
+    "gulp-coffeelint": "~0.4.0",
+    "gulp-mocha": "~2.0.0",
+    "gulp-coffee": "~2.2.0",
+    "gulp-util": "~3.0.1",
+    "mocha": "~2.0.1",
+    "sinon": "~1.12.2",
+    "sinon-chai": "~2.6.0"
+  },
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "underscore.string": "~2.4.0",
+    "minimist": "~1.1.0"
+  }
+}
