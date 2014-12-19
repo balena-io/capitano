@@ -34,9 +34,23 @@ exports.parse = (argv) ->
 exports.split = (string) ->
 	return [] if not string?
 
-	# TODO: This regex should be vastly improved to avoid
-	# having to type all special characters manually
-	result = string.match(/[\w-\*/\\:\.~]+|[<\['"][^<\[]+[>\]'"]/g) or []
+	# TODO: Refactor this to use a manual lexer
+	regex = ''
+
+	pair = ([ start, end ]) ->
+		start = '\\' + start
+		end = '\\' + end
+		regex += "#{start}[^#{end}]+#{end}|"
+
+	pair('[]')
+	pair('<>')
+	pair('""')
+	pair("''")
+
+	regex += '\\S+'
+
+	result = string.match(new RegExp(regex, 'g')) or []
+
 	return _.map result, (word) ->
 		word = _.str.unquote(word, '\'')
 		word = _.str.unquote(word, '"')
