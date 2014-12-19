@@ -38,11 +38,24 @@ exports.parse = function(argv) {
 };
 
 exports.split = function(string) {
-  var result;
+  var pair, regex, result;
   if (string == null) {
     return [];
   }
-  result = string.match(/[\w-\*/\\:\.~]+|[<\['"][^<\[]+[>\]'"]/g) || [];
+  regex = '';
+  pair = function(_arg) {
+    var end, start;
+    start = _arg[0], end = _arg[1];
+    start = '\\' + start;
+    end = '\\' + end;
+    return regex += "" + start + "[^" + end + "]+" + end + "|";
+  };
+  pair('[]');
+  pair('<>');
+  pair('""');
+  pair("''");
+  regex += '\\S+';
+  result = string.match(new RegExp(regex, 'g')) || [];
   return _.map(result, function(word) {
     word = _.str.unquote(word, '\'');
     word = _.str.unquote(word, '"');
