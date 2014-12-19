@@ -1,6 +1,6 @@
 {
   "name": "capitano",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Powerful, non opitionated command line parser for serious applications",
   "main": "build/capitano.js",
   "homepage": "https://github.com/resin-io/capitano",

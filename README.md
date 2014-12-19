@@ -320,6 +320,13 @@ Run the test suite by doing:
 $ gulp test
 ```
 
+ChangeLog
+---------
+
+### 1.0.1
+
+- Fix issues with path and quoted multi string parameters.
+
 Contribute
 ----------
 
