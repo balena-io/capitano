@@ -36,7 +36,11 @@ exports.split = (string) ->
 
 	# TODO: This regex should be vastly improved to avoid
 	# having to type all special characters manually
-	return string.match(/[\w-\*/\\:\.~]+|[<\[][^<\[]+[>\]]/g) or []
+	result = string.match(/[\w-\*/\\:\.~]+|[<\['"][^<\[]+[>\]'"]/g) or []
+	return _.map result, (word) ->
+		word = _.str.unquote(word, '\'')
+		word = _.str.unquote(word, '"')
+		return word
 
 exports.parseOptions = (definedOptions, options = {}) ->
 	result = {}

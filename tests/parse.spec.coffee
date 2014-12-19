@@ -204,6 +204,16 @@ describe 'Parse:', ->
 			result = [ 'foo', '~/.ssh/id_rsa.pub' ]
 			expect(parse.split(signature)).to.deep.equal(result)
 
+		it 'should split words surrounded by quotes correctly', ->
+			signature = 'foo \'hello world\''
+			result = [ 'foo', 'hello world' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
+		it 'should split words surrounded by double quotes correctly', ->
+			signature = 'foo "hello world"'
+			result = [ 'foo', 'hello world' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
 	describe '#parseOptions()', ->
 
 		it 'should not throw if options is undefined', ->

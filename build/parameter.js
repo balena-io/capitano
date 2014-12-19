@@ -78,12 +78,7 @@ module.exports = Parameter = (function() {
       }
     } else {
       if (this.isRequired()) {
-        if (parameterWordsLength !== 1) {
-          return false;
-        }
-      }
-      if (this.isOptional()) {
-        if (parameterWordsLength > 1) {
+        if (parameterWordsLength < 1) {
           return false;
         }
       }

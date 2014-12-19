@@ -401,3 +401,17 @@ describe 'Signature:', ->
 				result = signature.compileParameters('foo ~/.ssh/id_rsa.pub')
 				expect(result).to.deep.equal
 					bar: '~/.ssh/id_rsa.pub'
+
+		describe 'given quoted multi word command words', ->
+
+			it 'should parse single quoted multi words correctly', ->
+				signature = new Signature('foo <bar>')
+				result = signature.compileParameters('foo \'hello world\'')
+				expect(result).to.deep.equal
+					bar: 'hello world'
+
+			it 'should parse double quoted multi words correctly', ->
+				signature = new Signature('foo <bar>')
+				result = signature.compileParameters('foo "hello world"')
+				expect(result).to.deep.equal
+					bar: 'hello world'
