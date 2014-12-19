@@ -33,7 +33,10 @@ exports.parse = (argv) ->
 
 exports.split = (string) ->
 	return [] if not string?
-	return string.match(/[\w-\*]+|[<\[][^<\[]+[>\]]/g) or []
+
+	# TODO: This regex should be vastly improved to avoid
+	# having to type all special characters manually
+	return string.match(/[\w-\*/\\:\.~]+|[<\[][^<\[]+[>\]]/g) or []
 
 exports.parseOptions = (definedOptions, options = {}) ->
 	result = {}
