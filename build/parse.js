@@ -38,10 +38,16 @@ exports.parse = function(argv) {
 };
 
 exports.split = function(string) {
+  var result;
   if (string == null) {
     return [];
   }
-  return string.match(/[\w-\*/\\:\.~]+|[<\[][^<\[]+[>\]]/g) || [];
+  result = string.match(/[\w-\*/\\:\.~]+|[<\['"][^<\[]+[>\]'"]/g) || [];
+  return _.map(result, function(word) {
+    word = _.str.unquote(word, '\'');
+    word = _.str.unquote(word, '"');
+    return word;
+  });
 };
 
 exports.parseOptions = function(definedOptions, options) {

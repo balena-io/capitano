@@ -52,10 +52,7 @@ module.exports = class Parameter
 			return false if parameterWordsLength < 1
 		else
 			if @isRequired()
-				return false if parameterWordsLength isnt 1
-
-			if @isOptional()
-				return false if parameterWordsLength > 1
+				return false if parameterWordsLength < 1
 
 		return true
 

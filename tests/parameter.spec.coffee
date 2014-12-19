@@ -257,8 +257,8 @@ describe 'Parameter:', ->
 			it 'should return true if it matches', ->
 				expect(@parameter.matches('bar')).to.be.true
 
-			it 'should return false if command exceeds', ->
-				expect(@parameter.matches('bar baz')).to.be.false
+			it 'should return true if command exceeds', ->
+				expect(@parameter.matches('bar baz')).to.be.true
 
 		describe 'given an optional parameter', ->
 
@@ -272,8 +272,8 @@ describe 'Parameter:', ->
 			it 'should return true if it matches', ->
 				expect(@parameter.matches('hello')).to.be.true
 
-			it 'should return false if it exceeds', ->
-				expect(@parameter.matches('hello world')).to.be.false
+			it 'should return true if it exceeds', ->
+				expect(@parameter.matches('hello world')).to.be.true
 
 		describe 'given a required variadic parameter', ->
 
