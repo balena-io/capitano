@@ -4,7 +4,7 @@ Capitano
 [![npm version](https://badge.fury.io/js/capitano.svg)](http://badge.fury.io/js/capitano)
 [![dependencies](https://david-dm.org/resin-io/capitano.png)](https://david-dm.org/username/repo.png)
 
-Capitano allows you to craft powerful command line application, your way.
+Capitano allows you to craft powerful command line applications, your way.
 
 ```coffee
 capitano = require('capitano')
