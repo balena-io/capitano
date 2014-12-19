@@ -203,11 +203,11 @@ The Capitano Signature class contains the following public fields:
 
 A predicate method that returns `true` if the signature has at least one parameter.
 
-### Signature#hasVariadicParameters()
+#### Signature#hasVariadicParameters()
 
 A predicate method that returns `true` if the signature has at least one variadic parameter.
 
-### isWildcard()
+#### Signature#isWildcard()
 
 A predicate method that returns `true` if the signature represents a wildcard.
 
@@ -221,15 +221,15 @@ The Capitano Option class contains the following public fields:
 
 See [Signature class](https://github.com/resin-io/capitano#signature).
 
-### Option#alias (string|[string])
+#### Option#alias (string|[string])
 
 A string or array of string alias.
 
-### Option#boolean (boolean)
+#### Option#boolean (boolean)
 
 Whether the option is boolean or not.
 
-### Option#parameter (string)
+#### Option#parameter (string)
 
 An option parameter (optional).
 
