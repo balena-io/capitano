@@ -41,7 +41,7 @@ exports.split = function(string) {
   if (string == null) {
     return [];
   }
-  return string.match(/[\w-\*]+|[<\[][^<\[]+[>\]]/g) || [];
+  return string.match(/[\w-\*/\\:\.~]+|[<\[][^<\[]+[>\]]/g) || [];
 };
 
 exports.parseOptions = function(definedOptions, options) {

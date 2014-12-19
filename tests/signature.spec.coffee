@@ -381,3 +381,23 @@ describe 'Signature:', ->
 				result = signature.compileParameters('foo 19')
 				expect(result).to.deep.equal
 					bar: 19
+
+		describe 'given path commands', ->
+
+			it 'should be able to parse absolute paths', ->
+				signature = new Signature('foo <bar>')
+				result = signature.compileParameters('foo /Users/me/foo/bar')
+				expect(result).to.deep.equal
+					bar: '/Users/me/foo/bar'
+
+			it 'should be able to parse relative paths', ->
+				signature = new Signature('foo <bar>')
+				result = signature.compileParameters('foo ../hello/world')
+				expect(result).to.deep.equal
+					bar: '../hello/world'
+
+			it 'should be able to parse home relative paths', ->
+				signature = new Signature('foo <bar>')
+				result = signature.compileParameters('foo ~/.ssh/id_rsa.pub')
+				expect(result).to.deep.equal
+					bar: '~/.ssh/id_rsa.pub'

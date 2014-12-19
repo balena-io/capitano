@@ -184,6 +184,26 @@ describe 'Parse:', ->
 			result = [ '[hello world...]', '[foo bar baz...]' ]
 			expect(parse.split(signature)).to.deep.equal(result)
 
+		it 'should split absolute paths parameters correctly', ->
+			signature = 'foo /Users/me/foo/bar'
+			result = [ 'foo', '/Users/me/foo/bar' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
+		it 'should split absolute paths (win32) parameters correctly', ->
+			signature = 'foo C:\\Users\\me\\foo\\bar'
+			result = [ 'foo', 'C:\\Users\\me\\foo\\bar' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
+		it 'should split relative paths parameters correctly', ->
+			signature = 'foo ../hello/world'
+			result = [ 'foo', '../hello/world' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
+		it 'should split home relative paths parameters correctly', ->
+			signature = 'foo ~/.ssh/id_rsa.pub'
+			result = [ 'foo', '~/.ssh/id_rsa.pub' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
 	describe '#parseOptions()', ->
 
 		it 'should not throw if options is undefined', ->
