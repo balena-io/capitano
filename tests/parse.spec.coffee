@@ -147,6 +147,22 @@ describe 'Parse:', ->
 					global: {}
 					options: {}
 
+			it 'should be able to parse commands with multiple arguments', ->
+				argv = parse.split('transfer <from name> <to name>')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'transfer <from name> <to name>'
+					global: {}
+					options: {}
+
+			it 'should be able to parse commands with optional arguments', ->
+				argv = parse.split('greet [their name]')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'greet [their name]'
+					global: {}
+					options: {}
+
 			it 'should not discard single quotes when parsing the command', ->
 				argv = parse.split('hello \'John Doe\'')
 				result = parse.parse(argv)
