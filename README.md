@@ -323,6 +323,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.0.2
+
+- Fix https://github.com/resin-io/capitano/issues/4.
+
 ### 1.0.1
 
 - Fix issues with path and quoted multi string parameters.
