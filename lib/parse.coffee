@@ -27,6 +27,16 @@ exports.parse = (argv) ->
 	result.global = exports.parseOptions(state.globalOptions, options)
 
 	if not _.isEmpty(output._)
+
+		# Preserve quotes when joining the command.
+		# If a command word used to have quotes (e.g: had whitespace),
+		# we explicitly quote it back.
+		# https://github.com/resin-io/capitano/issues/4
+		output._ = _.map output._, (word) ->
+			if /\s/.test(word)
+				word = _.str.quote(word)
+			return word
+
 		result.command = output._.join(' ')
 
 	return result
