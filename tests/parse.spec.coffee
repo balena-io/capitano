@@ -147,6 +147,22 @@ describe 'Parse:', ->
 					global: {}
 					options: {}
 
+			it 'should not discard single quotes when parsing the command', ->
+				argv = parse.split('hello \'John Doe\'')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'hello "John Doe"'
+					global: {}
+					options: {}
+
+			it 'should not discard double quotes when parsing the command', ->
+				argv = parse.split('hello "John Doe"')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'hello "John Doe"'
+					global: {}
+					options: {}
+
 	describe '#split()', ->
 
 		it 'should return an empty array if no signature', ->

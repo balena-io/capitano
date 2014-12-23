@@ -32,6 +32,12 @@ exports.parse = function(argv) {
   result.options = options;
   result.global = exports.parseOptions(state.globalOptions, options);
   if (!_.isEmpty(output._)) {
+    output._ = _.map(output._, function(word) {
+      if (/\s/.test(word)) {
+        word = _.str.quote(word);
+      }
+      return word;
+    });
     result.command = output._.join(' ');
   }
   return result;
