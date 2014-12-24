@@ -1,9 +1,11 @@
 _ = require('lodash')
+_.str = require('underscore.string')
 parse = require('./parse')
 
 REGEX_REQUIRED = /^<(.*)>$/
 REGEX_OPTIONAL = /^\[(.*)\]$/
 REGEX_VARIADIC = /^[<\[](.*)[\.]{3}[>\]]$/
+REGEX_MULTIWORD = /\s/
 
 module.exports = class Parameter
 	constructor: (parameter) ->
@@ -31,6 +33,9 @@ module.exports = class Parameter
 			@isOptional()
 		]
 
+	isMultiWord: ->
+		return @_testRegex(REGEX_MULTIWORD)
+
 	getValue: ->
 		return @parameter if @isWord()
 		regex = REGEX_REQUIRED if @isRequired()
@@ -57,4 +62,12 @@ module.exports = class Parameter
 		return true
 
 	toString: ->
+
+		# Preserve quotes when joining the command.
+		# If a command word used to have quotes (e.g: had whitespace),
+		# we explicitly quote it back.
+		# https://github.com/resin-io/capitano/issues/4
+		if @isMultiWord() and @isWord()
+			return _.str.quote(@parameter)
+
 		return @parameter

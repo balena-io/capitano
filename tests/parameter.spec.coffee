@@ -157,6 +157,48 @@ describe 'Parameter:', ->
 				parameter = new Parameter(input)
 				expect(parameter.isWord()).to.be.true
 
+	describe '#isMultiWord()', ->
+
+		it 'should return true for non parameter multi words', ->
+			parameter = new Parameter('foo bar')
+			expect(parameter.isMultiWord()).to.be.true
+
+		it 'should return true for required parameter multi words', ->
+			parameter = new Parameter('<foo bar>')
+			expect(parameter.isMultiWord()).to.be.true
+
+		it 'should return true for optional parameter multi words', ->
+			parameter = new Parameter('[foo bar]')
+			expect(parameter.isMultiWord()).to.be.true
+
+		it 'should return true for variadic required parameter multi words', ->
+			parameter = new Parameter('<foo bar...>')
+			expect(parameter.isMultiWord()).to.be.true
+
+		it 'should return true for variadic optional parameter multi words', ->
+			parameter = new Parameter('[foo bar...]')
+			expect(parameter.isMultiWord()).to.be.true
+
+		it 'should return false for single word non parameters', ->
+			parameter = new Parameter('foo')
+			expect(parameter.isMultiWord()).to.be.false
+
+		it 'should return false for single word required parameters', ->
+			parameter = new Parameter('<foo>')
+			expect(parameter.isMultiWord()).to.be.false
+
+		it 'should return false for single word optional parameters', ->
+			parameter = new Parameter('[foo]')
+			expect(parameter.isMultiWord()).to.be.false
+
+		it 'should return false for single word variadic required parameters', ->
+			parameter = new Parameter('<foo...>')
+			expect(parameter.isMultiWord()).to.be.false
+
+		it 'should return false for single word variadic optional parameters', ->
+			parameter = new Parameter('[foo...]')
+			expect(parameter.isMultiWord()).to.be.false
+
 	describe '#getValue()', ->
 
 		it 'should get word values', ->
@@ -338,3 +380,7 @@ describe 'Parameter:', ->
 		it 'should convert a wildcard to string', ->
 			parameter = new Parameter(settings.signatures.wildcard)
 			expect(parameter.toString()).to.equal(settings.signatures.wildcard)
+
+		it 'should preserve quotes for multi word non parameters', ->
+			parameter = new Parameter('foo bar')
+			expect(parameter.toString()).to.equal('"foo bar"')
