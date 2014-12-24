@@ -323,6 +323,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.0.4
+
+- Fix issue when instantiating Parameter instances with a number directly.
+
 ### 1.0.3
 
 - Fix issue with quotation of multi word parameters. Thanks [@Page-](https://github.com/Page-)!
