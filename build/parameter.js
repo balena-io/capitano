@@ -1,6 +1,8 @@
-var Parameter, REGEX_OPTIONAL, REGEX_REQUIRED, REGEX_VARIADIC, parse, _;
+var Parameter, REGEX_MULTIWORD, REGEX_OPTIONAL, REGEX_REQUIRED, REGEX_VARIADIC, parse, _;
 
 _ = require('lodash');
+
+_.str = require('underscore.string');
 
 parse = require('./parse');
 
@@ -9,6 +11,8 @@ REGEX_REQUIRED = /^<(.*)>$/;
 REGEX_OPTIONAL = /^\[(.*)\]$/;
 
 REGEX_VARIADIC = /^[<\[](.*)[\.]{3}[>\]]$/;
+
+REGEX_MULTIWORD = /\s/;
 
 module.exports = Parameter = (function() {
   function Parameter(parameter) {
@@ -36,6 +40,10 @@ module.exports = Parameter = (function() {
 
   Parameter.prototype.isWord = function() {
     return !_.any([this.isRequired(), this.isOptional()]);
+  };
+
+  Parameter.prototype.isMultiWord = function() {
+    return this._testRegex(REGEX_MULTIWORD);
   };
 
   Parameter.prototype.getValue = function() {
@@ -87,6 +95,9 @@ module.exports = Parameter = (function() {
   };
 
   Parameter.prototype.toString = function() {
+    if (this.isMultiWord() && this.isWord()) {
+      return _.str.quote(this.parameter);
+    }
     return this.parameter;
   };
 

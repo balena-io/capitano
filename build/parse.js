@@ -1,4 +1,4 @@
-var minimist, settings, state, _;
+var Parameter, minimist, settings, state, _;
 
 _ = require('lodash');
 
@@ -9,6 +9,8 @@ minimist = require('minimist');
 settings = require('./settings');
 
 state = require('./state');
+
+Parameter = require('./parameter');
 
 exports.normalizeInput = function(argv) {
   if (argv === process.argv) {
@@ -33,10 +35,9 @@ exports.parse = function(argv) {
   result.global = exports.parseOptions(state.globalOptions, options);
   if (!_.isEmpty(output._)) {
     output._ = _.map(output._, function(word) {
-      if (/\s/.test(word)) {
-        word = _.str.quote(word);
-      }
-      return word;
+      var wordParameter;
+      wordParameter = new Parameter(word);
+      return wordParameter.toString();
     });
     result.command = output._.join(' ');
   }

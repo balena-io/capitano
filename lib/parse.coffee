@@ -3,6 +3,7 @@ _.str = require('underscore.string')
 minimist = require('minimist')
 settings = require('./settings')
 state = require('./state')
+Parameter = require('./parameter')
 
 exports.normalizeInput = (argv) ->
 	if argv is process.argv
@@ -27,15 +28,9 @@ exports.parse = (argv) ->
 	result.global = exports.parseOptions(state.globalOptions, options)
 
 	if not _.isEmpty(output._)
-
-		# Preserve quotes when joining the command.
-		# If a command word used to have quotes (e.g: had whitespace),
-		# we explicitly quote it back.
-		# https://github.com/resin-io/capitano/issues/4
 		output._ = _.map output._, (word) ->
-			if /\s/.test(word)
-				word = _.str.quote(word)
-			return word
+			wordParameter = new Parameter(word)
+			return wordParameter.toString()
 
 		result.command = output._.join(' ')
 
