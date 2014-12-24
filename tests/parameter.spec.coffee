@@ -12,7 +12,11 @@ describe 'Parameter:', ->
 				new Parameter()
 			.to.throw(Error)
 
-		it 'should throw an error if parameter is not a string', ->
+		it 'should convert a number parameter to string', ->
+			parameter = new Parameter(121)
+			expect(parameter.parameter).to.equal('121')
+
+		it 'should throw an error if parameter is not a string or a number', ->
 			expect ->
 				new Parameter([ 1, 2, 3 ])
 			.to.throw(Error)

@@ -16,6 +16,9 @@ REGEX_MULTIWORD = /\s/;
 
 module.exports = Parameter = (function() {
   function Parameter(parameter) {
+    if (_.isNumber(parameter)) {
+      parameter = String(parameter);
+    }
     if ((parameter == null) || !_.isString(parameter)) {
       throw new Error("Missing or invalid parameter: " + parameter);
     }
