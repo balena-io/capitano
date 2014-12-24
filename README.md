@@ -323,6 +323,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.0.3
+
+- Fix issue with quotation of multi word parameters. Thanks [@Page-](https://github.com/Page-)!
+
 ### 1.0.2
 
 - Fix https://github.com/resin-io/capitano/issues/4.
