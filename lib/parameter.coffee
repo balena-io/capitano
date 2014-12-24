@@ -10,6 +10,9 @@ REGEX_MULTIWORD = /\s/
 module.exports = class Parameter
 	constructor: (parameter) ->
 
+		if _.isNumber(parameter)
+			parameter = String(parameter)
+
 		if not parameter? or not _.isString(parameter)
 			throw new Error("Missing or invalid parameter: #{parameter}")
 
