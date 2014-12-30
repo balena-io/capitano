@@ -1,4 +1,6 @@
-var Parameter, minimist, settings, state, _;
+var Parameter, minimist, path, settings, state, _;
+
+path = require('path');
 
 _ = require('lodash');
 
@@ -12,10 +14,23 @@ state = require('./state');
 
 Parameter = require('./parameter');
 
-exports.normalizeInput = function(argv) {
-  if (argv === process.argv) {
-    argv = argv.slice(2);
+exports.parseArgv = function(argv, filename) {
+  var index;
+  if (filename == null) {
+    filename = __filename;
   }
+  index = _.indexOf(argv, filename);
+  if (index === -1) {
+    index = _.indexOf(argv, path.basename(filename));
+  }
+  if (index !== -1) {
+    argv = argv.slice(index + 1);
+  }
+  return argv;
+};
+
+exports.normalizeInput = function(argv, filename) {
+  argv = exports.parseArgv(argv, filename);
   if (_.isArray(argv)) {
     return argv;
   }

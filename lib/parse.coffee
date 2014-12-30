@@ -1,3 +1,4 @@
+path = require('path')
 _ = require('lodash')
 _.str = require('underscore.string')
 minimist = require('minimist')
@@ -5,9 +6,19 @@ settings = require('./settings')
 state = require('./state')
 Parameter = require('./parameter')
 
-exports.normalizeInput = (argv) ->
-	if argv is process.argv
-		argv = argv.slice(2)
+exports.parseArgv = (argv, filename = __filename) ->
+	index = _.indexOf(argv, filename)
+
+	if index is -1
+		index = _.indexOf(argv, path.basename(filename))
+
+	if index isnt -1
+		argv = argv.slice(index + 1)
+
+	return argv
+
+exports.normalizeInput = (argv, filename) ->
+	argv = exports.parseArgv(argv, filename)
 
 	return argv if _.isArray(argv)
 

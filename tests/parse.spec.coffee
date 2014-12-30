@@ -10,6 +10,20 @@ settings = require('../lib/settings')
 
 describe 'Parse:', ->
 
+	describe '#parseArgv()', ->
+
+		it 'should slice if filename is matched', ->
+			result = parse.parseArgv([ 'hello', 'world.js', 'foo' ], 'world.js')
+			expect(result).to.deep.equal([ 'foo' ])
+
+		it 'should not slice if filename is not matched', ->
+			result = parse.parseArgv([ 'hello', 'world.js', 'foo' ], 'hello.js')
+			expect(result).to.deep.equal([ 'hello', 'world.js', 'foo' ])
+
+		it 'should test for basename if filename is not matched', ->
+			result = parse.parseArgv([ 'hello', 'world.js', 'foo' ], '/hello/world.js')
+			expect(result).to.deep.equal([ 'foo' ])
+
 	describe '#normalizeInput()', ->
 
 		it 'should handle strings', ->
@@ -20,9 +34,30 @@ describe 'Parse:', ->
 			result = parse.normalizeInput([ '-x', '3', '-y', '4' ])
 			expect(result).to.deep.equal([ '-x', '3', '-y', '4' ])
 
-		it 'should discard first arguments if process.argv', ->
-			result = parse.normalizeInput(process.argv)
-			expect(result).to.deep.equal(process.argv.slice(2))
+		it 'should parse correctly if called with node command', ->
+			filename = 'app.js'
+			result = parse.normalizeInput([ 'node', 'app.js', 'hello' ], filename)
+			expect(result).to.deep.equal([ 'hello' ])
+
+		it 'should parse correctly if called with coffee command', ->
+			filename = 'app.coffee'
+			result = parse.normalizeInput([ 'coffee', 'app.coffee', 'hello' ], filename)
+			expect(result).to.deep.equal([ 'hello' ])
+
+		it 'should parse correctly when filename is absolute', ->
+			filename = '/my/absolute/app.coffee'
+			result = parse.normalizeInput([ 'coffee', 'app.coffee', 'hello' ], filename)
+			expect(result).to.deep.equal([ 'hello' ])
+
+		it 'should process argv correctly if calling directly', ->
+			filename = 'resin.exe'
+			result = parse.normalizeInput([ 'resin.exe', 'apps' ], filename)
+			expect(result).to.deep.equal([ 'apps' ])
+
+		it 'should process argv correctly if calling directly without extension', ->
+			filename = 'resin'
+			result = parse.normalizeInput([ 'resin', 'apps' ], filename)
+			expect(result).to.deep.equal([ 'apps' ])
 
 		it 'should throw an error if invalid input', ->
 			expect ->
