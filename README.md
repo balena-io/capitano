@@ -233,6 +233,10 @@ Whether the option is boolean or not.
 
 An option parameter (optional).
 
+### Option#required (boolean|string)
+
+Defines whether an option is required. If the field is `true`, a generic error is thrown, otherwise you can set a custom error message by setting to a `string`.
+
 Examples
 --------
 

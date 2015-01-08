@@ -399,3 +399,47 @@ describe 'Parse:', ->
 			result = parse.parseOptions(definedOptions, options)
 			expect(result).to.deep.equal
 				foo: 25
+
+		describe 'given an option required key', ->
+
+			it 'should throw a generic error if true', ->
+				definedOptions = []
+				definedOptions.push new Option
+					signature: new Signature('foo')
+					parameter: 'bar'
+					required: true
+
+				options =
+					hello: 'world'
+
+				expect ->
+					parse.parseOptions(definedOptions, options)
+				.to.throw('Option foo is required')
+
+			it 'should not throw if false', ->
+				definedOptions = []
+				definedOptions.push new Option
+					signature: new Signature('foo')
+					parameter: 'bar'
+					required: false
+
+				options =
+					hello: 'world'
+
+				expect ->
+					parse.parseOptions(definedOptions, options)
+				.to.not.throw('Option foo is required')
+
+			it 'should throw a custom error if required is a string', ->
+				definedOptions = []
+				definedOptions.push new Option
+					signature: new Signature('foo')
+					parameter: 'bar'
+					required: 'Custom error!'
+
+				options =
+					hello: 'world'
+
+				expect ->
+					parse.parseOptions(definedOptions, options)
+				.to.throw('Custom error!')

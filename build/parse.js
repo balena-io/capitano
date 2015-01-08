@@ -80,6 +80,13 @@ exports.parseOptions = function(definedOptions, options) {
     definedOption = definedOptions[_i];
     signature = definedOption.signature;
     value = definedOption.getOptionsValue(options);
+    if ((definedOption.required != null) && (value == null)) {
+      if (_.isString(definedOption.required)) {
+        throw new Error(definedOption.required);
+      } else if (definedOption.required) {
+        throw new Error("Option " + definedOption.signature + " is required");
+      }
+    }
     if (!definedOption.matches(value)) {
       continue;
     }
