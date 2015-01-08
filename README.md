@@ -327,6 +327,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.1.0
+
+- Implement support for required options.
+
 ### 1.0.4
 
 - Fix issue when instantiating Parameter instances with a number directly.
