@@ -372,6 +372,7 @@ TODO
 -------
 
 - Options default values.
+- Allow comma-separated parameter values (numbers, floats, etc).
 
 License
 -------
