@@ -327,6 +327,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.1.1
+
+- Fix issue with parsing words that start with a number.
+
 ### 1.1.0
 
 - Implement support for required options.
