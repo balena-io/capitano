@@ -382,6 +382,11 @@ describe 'Signature:', ->
 				expect(result).to.deep.equal
 					bar: 19
 
+			it 'should match with a string that starts with a number', ->
+				signature = new Signature('<foo>')
+				result = signature.compileParameters('1bar')
+				expect(result).to.deep.equal(foo: '1bar')
+
 		describe 'given path commands', ->
 
 			it 'should be able to parse absolute paths', ->

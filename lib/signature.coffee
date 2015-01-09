@@ -80,11 +80,13 @@ module.exports = class Signature
 			if not parameter?
 				throw new Error('Signature dismatch')
 
+			parameterValue = parameter.getValue()
+
 			if not parameter.matches(word)
 				if parameter.isRequired()
-					throw new Error("Missing #{parameter.getValue()}")
+					throw new Error("Missing #{parameterValue}")
 
-				throw new Error("#{parameter.getValue()} does not match #{word}")
+				throw new Error("#{parameterValue} does not match #{word}")
 
 			if parameter.isVariadic()
 				parameterIndex = _.indexOf(@parameters, parameter)
@@ -93,10 +95,13 @@ module.exports = class Signature
 				if parameter.isOptional() and _.isEmpty(value)
 					return result
 
-				result[parameter.getValue()] = value
+				result[parameterValue] = value
 				return result
 
 			if not parameter.isWord() and word?
-				result[parameter.getValue()] = _.parseInt(word) or word
+				if /^\d+$/.test(word)
+					result[parameterValue] = _.parseInt(word)
+				else
+					result[parameterValue] = word
 
 		return result
