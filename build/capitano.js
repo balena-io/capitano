@@ -36,9 +36,6 @@ exports.globalOption = function(options) {
 
 exports.execute = function(args, callback) {
   var command, error;
-  if (callback == null) {
-    callback = _.noop;
-  }
   command = exports.state.getMatchCommand(args.command);
   if (command == null) {
     return exports.defaults.actions.commandNotFound(args.command);
@@ -47,7 +44,7 @@ exports.execute = function(args, callback) {
     return command.execute(args, callback);
   } catch (_error) {
     error = _error;
-    return callback(error);
+    return typeof callback === "function" ? callback(error) : void 0;
   }
 };
 

@@ -27,7 +27,7 @@ exports.globalOption = (options) ->
 	option = new Option(options)
 	exports.state.globalOptions.push(option)
 
-exports.execute = (args, callback = _.noop) ->
+exports.execute = (args, callback) ->
 	command = exports.state.getMatchCommand(args.command)
 
 	if not command?
@@ -36,7 +36,7 @@ exports.execute = (args, callback = _.noop) ->
 	try
 		command.execute(args, callback)
 	catch error
-		return callback(error)
+		return callback?(error)
 
 # Handy shortcut
 exports.run = (argv, callback) ->
