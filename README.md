@@ -333,6 +333,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.2.0
+
+- Implement action callback support. Discussed in [#11](https://github.com/resin-io/capitano/issues/11).
+
 ### 1.1.1
 
 - Fix issue with parsing words that start with a number.
