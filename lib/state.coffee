@@ -3,6 +3,7 @@ settings = require('./settings')
 
 exports.commands = []
 exports.globalOptions = []
+exports.permissions = {}
 
 exports.findCommandBySignature = (signature) ->
 	return _.findWhere exports.commands, (command) ->

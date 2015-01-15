@@ -113,6 +113,58 @@ describe 'Command:', ->
 			command.option(option)
 			expect(command.options).to.have.length(1)
 
+	describe '#applyPermissions()', ->
+
+		beforeEach ->
+			state.permissions = {}
+
+		describe 'given a command without permissions', ->
+
+			beforeEach ->
+				@command = new Command
+					signature: new Signature('hello')
+					action: _.noop
+
+			it 'should call the callback without errors', ->
+				spy = sinon.spy()
+				@command.applyPermissions(spy)
+				expect(spy).to.have.been.calledOnce
+				expect(spy.firstCall.args).to.deep.equal([])
+
+		describe 'given a command with permissions', ->
+
+			beforeEach ->
+				@command = new Command
+					signature: new Signature('hello')
+					action: _.noop
+					permission: 'user'
+
+			it 'should continue if permission is found and does not return an error', ->
+				state.permissions.user = (done) -> done()
+				spy = sinon.spy()
+				@command.applyPermissions(spy)
+				expect(spy).to.have.been.calledOnce
+				expect(spy.firstCall.args).to.deep.equal([])
+
+			it 'should return an error if permission was not found', ->
+				spy = sinon.spy()
+				@command.applyPermissions(spy)
+				expect(spy).to.have.been.calledOnce
+				args = spy.firstCall.args
+				expect(args[0]).to.be.an.instanceof(Error)
+				expect(args[0].message).to.equal('Permission not found: user')
+
+			it 'should return an error if permission is found and returns an error', ->
+				state.permissions.user = (done) ->
+					error = new Error('You are not a user!')
+					done(error)
+				spy = sinon.spy()
+				@command.applyPermissions(spy)
+				expect(spy).to.have.been.calledOnce
+				args = spy.firstCall.args
+				expect(args[0]).to.be.an.instanceof(Error)
+				expect(args[0].message).to.equal('You are not a user!')
+
 	describe '#execute()', ->
 
 		beforeEach ->
@@ -313,6 +365,42 @@ describe 'Command:', ->
 
 			command.execute(command: 'foo bar')
 			expect(spy).to.have.been.calledOnce
+
+		describe 'given a command with permissions', ->
+
+			beforeEach ->
+				state.permissions = {}
+
+				@actionSpy = sinon.spy()
+				@command = new Command
+					signature: new Signature('foo')
+					action: @actionSpy
+					permission: 'user'
+
+			it 'should call the action if permission is found and does not return an error', (done) ->
+				state.permissions.user = (done) -> done()
+				@command.execute command: 'foo', (error) =>
+					expect(error).to.not.exist
+					expect(@actionSpy).to.have.been.called
+					done()
+
+			it 'should not call the action if permission is found and returns an error', (done) ->
+				state.permissions.user = (done) ->
+					error = new Error('You are not a user!')
+					done(error)
+
+				@command.execute command: 'foo', (error) =>
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('You are not a user!')
+					expect(@actionSpy).to.not.have.been.called
+					done()
+
+			it 'should return an error if permission is not found', (done) ->
+				@command.execute command: 'foo', (error) =>
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Permission not found: user')
+					expect(@actionSpy).to.not.have.been.called
+					done()
 
 	describe '#isWildcard()', ->
 
