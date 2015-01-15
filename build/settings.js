@@ -8,10 +8,6 @@ module.exports = {
         console.error("Command not found: " + command);
       }
       return process.exit(1);
-    },
-    onError: function(error) {
-      console.error(error.message);
-      return process.exit(1);
     }
   }
 };

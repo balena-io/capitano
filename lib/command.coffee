@@ -23,11 +23,14 @@ module.exports = class Command
 		_.each(options.options, @option, this)
 		_.extend(this, _.omit(options, 'options'))
 
-	execute: (args = {}) ->
+	execute: (args = {}, callback) ->
 		params = @signature.compileParameters(args.command)
 		allOptions = _.union(state.globalOptions, @options)
 		parsedOptions = parse.parseOptions(allOptions, args.options)
-		@action.call(this, params, parsedOptions)
+		@action.call(this, params, parsedOptions, callback)
+
+		# Means the user is not declaring the callback
+		return callback?() if @action.length < 3
 
 	option: (option) ->
 		if option not instanceof Option

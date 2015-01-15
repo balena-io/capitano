@@ -96,25 +96,54 @@ describe 'Capitano:', ->
 			expect(commandNotFoundStub).to.have.been.calledWith('not valid command')
 			commandNotFoundStub.restore()
 
-		it 'should all onError if there was an error executing the command', ->
-			onErrorStub = sinon.stub(cliManager.defaults.actions, 'onError')
+		it 'should return an error if there was an error executing the command', (done) ->
 			commandNotFoundStub = sinon.stub(cliManager.defaults.actions, 'commandNotFound')
 
 			cliManager.command
 				signature: 'hello <name>'
 				action: _.noop
 
-			cliManager.execute(command: 'hello')
+			cliManager.execute command: 'hello', (error) ->
+				expect(error).to.be.an.instanceof(Error)
+				expect(error.message).to.equal('Missing name')
+				commandNotFoundStub.restore()
+				done()
 
-			expect(commandNotFoundStub).to.not.have.been.called
-			expect(onErrorStub).to.have.been.called
-			args = onErrorStub.firstCall.args
-			expect(args).to.have.length(1)
-			expect(args[0]).to.be.an.instanceof(Error)
-			expect(args[0].message).to.equal('Missing name')
+		it 'should pass an execution error to the default handler', (done) ->
+			actionError = new Error('action error')
 
-			onErrorStub.restore()
-			commandNotFoundStub.restore()
+			cliManager.command
+				signature: 'hello'
+				action: (params, options, callback) ->
+					return callback(actionError)
+
+			cliManager.execute command: 'hello', (error) ->
+				expect(error).to.deep.equal(actionError)
+				done()
+
+		it 'should pass an async execution error to the default handler', (done) ->
+			actionError = new Error('action error')
+
+			cliManager.command
+				signature: 'hello'
+				action: (params, options, callback) ->
+					setTimeout ->
+						return callback(actionError)
+					, 1
+
+			cliManager.execute command: 'hello', (error) ->
+				expect(error).to.deep.equal(actionError)
+				done()
+
+		it 'should not throw an error if missing callback', ->
+			cliManager.command
+				signature: 'hello'
+				action: (params, options, callback) ->
+					return callback(actionError)
+
+			expect ->
+				cliManager.execute(command: 'hello')
+			.to.not.throw(Error)
 
 	describe '#run()', ->
 
@@ -128,3 +157,14 @@ describe 'Capitano:', ->
 			cliManager.run('hello John')
 			expect(spy).to.have.been.calledOnce
 			expect(spy).to.have.been.calledWith(name: 'John')
+
+		it 'should pass any error to the callback', (done) ->
+			cliManager.command
+				signature: 'hello <name>'
+				action: (params, options, callback) ->
+					return callback(new Error())
+
+			cliManager.run 'hello', (error) ->
+				expect(error).to.be.an.instanceof(Error)
+				expect(error.message).to.equal('Missing name')
+				done()

@@ -26,7 +26,8 @@ capitano.command
 
 		console.log(log)
 
-capitano.run(process.argv)
+capitano.run process.argv, (error) ->
+	throw error if error?
 ```
 
 ***
@@ -72,7 +73,9 @@ The command signature. If it's `*`, it will match anything that is not matched b
 
 ### action (function)
 
-Function to call when the signature is matched. This function gets passed a parameter and an options object.
+Function to call when the signature is matched. This function gets passed a parameter object, an options object and a `callback` to be called when the action is finished.
+
+If the `callback` argument is not declared in the action function, it'll be called implicitly, however in order to ensure Capitano works as expected, call the `callback` function if your action is async.
 
 ### options ([object])
 
@@ -101,7 +104,7 @@ The name of the parameter, excluding required/optional tags (`bar` instead of `<
 
 Define an alias, or a set of alias for an option. Aliases can contain single letter abbreviations (`f`, `l`) or full option names (`baz`, `foo`).
 
-## capitano.run(argv)
+## capitano.run(argv, callback)
 
 Run and execute the application given a set of arguments (usually `process.argv`):
 
@@ -109,7 +112,7 @@ Run and execute the application given a set of arguments (usually `process.argv`
 capitano.run(process.argv)
 ```
 
-**Note:** `capitano.run` is a shorcut function for `capitano.execute(capitano.parse(argv))`. You will usually use this function, however you can use `parse()` and `execute()` in particular situations when you need to differenciate between parsing and executing the commands.
+**Note:** `capitano.run` is a shorcut function for `capitano.execute(capitano.parse(argv), callback)`. You will usually use this function, however you can use `parse()` and `execute()` in particular situations when you need to differenciate between parsing and executing the commands.
 
 ## capitano.parse(argv)
 
@@ -129,10 +132,12 @@ An object containing the raw representation of the given options.
 
 An object containing the matches and parsed global options.
 
-## capitano.execute(cli)
+## capitano.execute(cli, callback)
 
 It accepts a `cli` object (returned by [capitano.parse()](https://github.com/resin-io/capitano#capitanoparseargv)) and 
 executes the corresponding command, with it's corresponding options.
+
+You're expected to provide your own error handling mechanism here, or in the `capitano.run` if executing from there.
 
 ## capitano.state
 
@@ -170,7 +175,6 @@ It includes the following fields:
 
 - `signatures.wildcard (string)` The wildcard symbol. Defaults to `*`.
 - `actions.commandNotFound(signature)` The function called when a command was not found. By default, it prints a boring `Command not found: <signature>` and exits with an error code 1.
-- `actions.onError(Error)` The function called when there is an error. By default, it prints the error message and exits with an error code 1.
 
 **Pro tip:** If you want to modify these settings, do it as early as possible (before registering any commands/global options) as some settings are used when performing the mentioned tasks.
 
@@ -265,7 +269,8 @@ capitano.command
 			continue if command.isWildcard()
 			console.log("\t#{command.signature}\t\t\t"#{command.description})
 
-capitano.run(process.argv)
+capitano.run process.argv, (error) ->
+	throw error if error?
 ```
 
 ***
@@ -305,7 +310,8 @@ capitano.command
 		
 		console.log(command.help)
 		
-capitano.run(process.argv)
+capitano.run process.argv, (error) ->
+	throw error if error?
 ```
 
 ***
