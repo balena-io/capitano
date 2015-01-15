@@ -27,16 +27,18 @@ exports.globalOption = (options) ->
 	option = new Option(options)
 	exports.state.globalOptions.push(option)
 
-exports.execute = (args) ->
+exports.execute = (args, callback = _.noop) ->
 	command = exports.state.getMatchCommand(args.command)
 
 	if not command?
 		return exports.defaults.actions.commandNotFound(args.command)
 
 	try
-		command.execute(args)
+		command.execute(args, callback)
 	catch error
-		return exports.defaults.actions.onError(error)
+		return callback(error)
 
 # Handy shortcut
-exports.run = _.compose(exports.execute, exports.parse)
+exports.run = (argv, callback) ->
+	parsedArgs = exports.parse(argv)
+	exports.execute(parsedArgs, callback)

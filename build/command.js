@@ -33,7 +33,7 @@ module.exports = Command = (function() {
     _.extend(this, _.omit(options, 'options'));
   }
 
-  Command.prototype.execute = function(args) {
+  Command.prototype.execute = function(args, callback) {
     var allOptions, params, parsedOptions;
     if (args == null) {
       args = {};
@@ -41,7 +41,10 @@ module.exports = Command = (function() {
     params = this.signature.compileParameters(args.command);
     allOptions = _.union(state.globalOptions, this.options);
     parsedOptions = parse.parseOptions(allOptions, args.options);
-    return this.action.call(this, params, parsedOptions);
+    this.action.call(this, params, parsedOptions, callback);
+    if (this.action.length < 3) {
+      return typeof callback === "function" ? callback() : void 0;
+    }
   };
 
   Command.prototype.option = function(option) {

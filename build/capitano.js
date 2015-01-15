@@ -34,18 +34,25 @@ exports.globalOption = function(options) {
   return exports.state.globalOptions.push(option);
 };
 
-exports.execute = function(args) {
+exports.execute = function(args, callback) {
   var command, error;
+  if (callback == null) {
+    callback = _.noop;
+  }
   command = exports.state.getMatchCommand(args.command);
   if (command == null) {
     return exports.defaults.actions.commandNotFound(args.command);
   }
   try {
-    return command.execute(args);
+    return command.execute(args, callback);
   } catch (_error) {
     error = _error;
-    return exports.defaults.actions.onError(error);
+    return callback(error);
   }
 };
 
-exports.run = _.compose(exports.execute, exports.parse);
+exports.run = function(argv, callback) {
+  var parsedArgs;
+  parsedArgs = exports.parse(argv);
+  return exports.execute(parsedArgs, callback);
+};

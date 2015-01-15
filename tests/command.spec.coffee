@@ -118,38 +118,44 @@ describe 'Command:', ->
 		beforeEach ->
 			state.globalOptions = []
 
-		it 'should execute the action', ->
+		it 'should execute the action', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
 				signature: new Signature('foo <bar>')
 				action: spy
 
-			command.execute(command: 'foo hello')
-			expect(spy).to.have.been.calledOnce
-			expect(spy).to.have.been.calledWith(bar: 'hello')
+			command.execute command: 'foo hello', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledOnce
+				expect(spy).to.have.been.calledWith(bar: 'hello')
+				done()
 
-		it 'should call action within the context of command', ->
+		it 'should call action within the context of command', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
 				signature: new Signature('foo')
 				action: spy
 
-			command.execute(command: 'foo')
-			expect(spy).to.have.been.calledOn(command)
+			command.execute command: 'foo', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledOn(command)
+				done()
 
-		it 'should pass empty objects if nullary command', ->
+		it 'should pass empty objects if nullary command', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
 				signature: new Signature('foo')
 				action: spy
 
-			command.execute(command: 'foo')
-			expect(spy).to.have.been.calledWith({}, {})
+			command.execute command: 'foo', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledWith({}, {})
+				done()
 
-		it 'should pass an empty object as the second argument if no options', ->
+		it 'should pass an empty object as the second argument if no options', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
@@ -157,10 +163,12 @@ describe 'Command:', ->
 				action: spy
 
 			expect(state.globalOptions).to.deep.equal([])
-			command.execute(command: 'foo baz')
-			expect(spy).to.have.been.calledWith(bar: 'baz', {})
+			command.execute command: 'foo baz', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledWith(bar: 'baz', {})
+				done()
 
-		it 'should parse global options', ->
+		it 'should parse global options', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
@@ -171,18 +179,20 @@ describe 'Command:', ->
 				signature: new Signature('quiet')
 				boolean: true
 
-			command.execute
+			command.execute {
 				command: 'foo baz'
 				options:
 					quiet: true
+			}, (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledWith {
+					bar: 'baz'
+				}, {
+					quiet: true
+				}
+				done()
 
-			expect(spy).to.have.been.calledWith {
-				bar: 'baz'
-			}, {
-				quiet: true
-			}
-
-		it 'should parse command options', ->
+		it 'should parse command options', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
@@ -194,18 +204,20 @@ describe 'Command:', ->
 						boolean: true
 				]
 
-			command.execute
+			command.execute {
 				command: 'foo baz'
 				options:
 					quiet: true
+			}, (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledWith {
+					bar: 'baz'
+				}, {
+					quiet: true
+				}
+				done()
 
-			expect(spy).to.have.been.calledWith {
-				bar: 'baz'
-			}, {
-				quiet: true
-			}
-
-		it 'should parse global and command options', ->
+		it 'should parse global and command options', (done) ->
 			spy = sinon.spy()
 
 			state.globalOptions.push new Option
@@ -223,20 +235,22 @@ describe 'Command:', ->
 						boolean: true
 				]
 
-			command.execute
+			command.execute {
 				command: 'foo baz'
 				options:
 					quiet: true
 					c: 'hello.conf'
+			}, (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledWith {
+					bar: 'baz'
+				}, {
+					quiet: true
+					config: 'hello.conf'
+				}
+				done()
 
-			expect(spy).to.have.been.calledWith {
-				bar: 'baz'
-			}, {
-				quiet: true
-				config: 'hello.conf'
-			}
-
-		it 'should give precedence to command options', ->
+		it 'should give precedence to command options', (done) ->
 			spy = sinon.spy()
 
 			state.globalOptions.push new Option
@@ -252,16 +266,53 @@ describe 'Command:', ->
 						boolean: true
 				]
 
-			command.execute
+			command.execute {
 				command: 'foo baz'
 				options:
 					config: true
+			}, (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledWith {
+					bar: 'baz'
+				}, {
+					config: true
+				}
+				done()
 
-			expect(spy).to.have.been.calledWith {
-				bar: 'baz'
-			}, {
-				config: true
-			}
+		it 'should be able to call the done callback manually', ->
+			spy = sinon.spy()
+
+			command = new Command
+				signature: new Signature('foo <bar>')
+				action: (params, options, callback) ->
+					return callback()
+
+			command.execute(command: 'foo bar', spy)
+
+			expect(spy).to.have.been.calledOnce
+
+		it 'should be able to call the done callback with an error', ->
+			spy = sinon.spy()
+			error = new Error('Test error')
+
+			command = new Command
+				signature: new Signature('foo <bar>')
+				action: (params, options, callback) ->
+					return callback(error)
+
+			command.execute(command: 'foo bar', spy)
+
+			expect(spy).to.have.been.calledWithExactly(error)
+
+		it 'should call the action if no callback', ->
+			spy = sinon.spy()
+
+			command = new Command
+				signature: new Signature('foo <bar>')
+				action: spy
+
+			command.execute(command: 'foo bar')
+			expect(spy).to.have.been.calledOnce
 
 	describe '#isWildcard()', ->
 
