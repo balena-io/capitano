@@ -33,18 +33,43 @@ module.exports = Command = (function() {
     _.extend(this, _.omit(options, 'options'));
   }
 
+  Command.prototype.applyPermissions = function(callback) {
+    var error, permissionFunction;
+    if (this.permission == null) {
+      return callback();
+    }
+    permissionFunction = state.permissions[this.permission];
+    if (permissionFunction == null) {
+      error = new Error("Permission not found: " + this.permission);
+      return callback(error);
+    }
+    return permissionFunction.call(this, callback);
+  };
+
+  Command.prototype._parseOptions = function(options) {
+    var allOptions, parsedOptions;
+    allOptions = _.union(state.globalOptions, this.options);
+    return parsedOptions = parse.parseOptions(allOptions, options);
+  };
+
   Command.prototype.execute = function(args, callback) {
-    var allOptions, params, parsedOptions;
+    var params, parsedOptions;
     if (args == null) {
       args = {};
     }
     params = this.signature.compileParameters(args.command);
-    allOptions = _.union(state.globalOptions, this.options);
-    parsedOptions = parse.parseOptions(allOptions, args.options);
-    this.action.call(this, params, parsedOptions, callback);
-    if (this.action.length < 3) {
-      return typeof callback === "function" ? callback() : void 0;
-    }
+    parsedOptions = this._parseOptions(args.options);
+    return this.applyPermissions((function(_this) {
+      return function(error) {
+        if (error != null) {
+          return typeof callback === "function" ? callback(error) : void 0;
+        }
+        _this.action(params, parsedOptions, callback);
+        if (_this.action.length < 3) {
+          return typeof callback === "function" ? callback() : void 0;
+        }
+      };
+    })(this));
   };
 
   Command.prototype.option = function(option) {

@@ -15,6 +15,10 @@ describe 'State:', ->
 	it 'should have a globalOptions array', ->
 		expect(state.globalOptions).to.be.an.instanceof(Array)
 
+	it 'should have a permissions object', ->
+		expect(_.isObject(state.permissions)).to.be.true
+		expect(_.isArray(state.permissions)).to.be.false
+
 	describe '#getMatchCommand()', ->
 
 		beforeEach ->

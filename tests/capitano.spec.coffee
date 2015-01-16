@@ -9,6 +9,35 @@ describe 'Capitano:', ->
 	beforeEach ->
 		cliManager.state.commands = []
 		cliManager.state.globalOptions = []
+		cliManager.state.permissions = {}
+
+	describe '#permission()', ->
+
+		it 'should throw an error if no name', ->
+			expect ->
+				cliManager.permission()
+			.to.throw('Missing permission name')
+
+		it 'should throw an error if name is not a string', ->
+			expect ->
+				cliManager.permission([ 'permissions' ])
+			.to.throw('Invalid permission name')
+
+		it 'should throw an error if no function', ->
+			expect ->
+				cliManager.permission('hello')
+			.to.throw('Missing permission function')
+
+		it 'should throw an error if function is not a function', ->
+			expect ->
+				cliManager.permission('name', [ 'function' ])
+			.to.throw('Invalid permission function')
+
+		it 'should add a permissions', ->
+			expect(cliManager.state.permissions.user).to.not.exist
+			cliManager.permission('user', _.noop)
+			expect(cliManager.state.permissions.user).to.exist
+			expect(cliManager.state.permissions.user).to.equal(_.noop)
 
 	describe '#command()', ->
 

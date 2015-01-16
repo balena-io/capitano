@@ -9,6 +9,10 @@ Capitano allows you to craft powerful command line applications, your way.
 ```coffee
 capitano = require('capitano')
 
+capitano.permission 'jviotti', (done) ->
+	return done() if process.env.USER is 'jviotti'
+	done(new Error('You are not jviotti!'))
+
 capitano.command
 	signature: 'utils print <title> [words...]'
 	options: [
@@ -16,6 +20,7 @@ capitano.command
 		boolean: true
 		alias: [ 'd' ]
 	]
+	permission: 'jviotti'
 	action: (params, options) ->
 		log = ''
 
@@ -50,6 +55,7 @@ Features
 - Separate between parsing and executing command line arguments.
 - No built-in generated help page, you roll your own.
 - No built-in commands, you have a high degree of control over your app.
+- Permission support.
 
 Installation
 ------------
@@ -81,6 +87,12 @@ If the `callback` argument is not declared in the action function, it'll be call
 
 Array of objects describing the options specific to this command. See the [options section](https://github.com/resin-io/capitano#option) for more information.
 
+### permission (string)
+
+Require a certain previously registered permission by name. If the permission requirements are not met, the command action will not be called and `capitano.execute()`, or `capitano.run()` will get the error you passed in from the permission function in their callbacks.
+
+Notice that Capitano doesn't currently supports passing an array of permissions. If you have that specific use case, you'll have to create a new permission that combines the other ones.
+
 ## capitano.globalOption(options)
 
 Register a global option, which will be accessible from every command (and from outside too!) so be careful about naming collisions!
@@ -99,10 +111,15 @@ Whether the option is boolean (doesn't accepts any parameters). It defaults to `
 
 The name of the parameter, excluding required/optional tags (`bar` instead of `<bar>`). Notice that if you set `boolean: true`, then you have to omit this option.
 
-
 ### alias (string|[string])
 
 Define an alias, or a set of alias for an option. Aliases can contain single letter abbreviations (`f`, `l`) or full option names (`baz`, `foo`).
+
+## capitano.permission(name, function)
+
+It registers a permission function under a certain name. The permission function is passed a `done()` function that accepts an error instance in case the user doesn't fits the permission requirements. Pass nothing if the permission requirement was matched.
+
+**Note:** You must call the `done()` function, even if your permission function is synchronous, in order for Capitano to continue.
 
 ## capitano.run(argv, callback)
 

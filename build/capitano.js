@@ -34,6 +34,22 @@ exports.globalOption = function(options) {
   return exports.state.globalOptions.push(option);
 };
 
+exports.permission = function(name, permissionFunction) {
+  if (name == null) {
+    throw new Error('Missing permission name');
+  }
+  if (!_.isString(name)) {
+    throw new Error('Invalid permission name');
+  }
+  if (permissionFunction == null) {
+    throw new Error('Missing permission function');
+  }
+  if (!_.isFunction(permissionFunction)) {
+    throw new Error('Invalid permission function');
+  }
+  return exports.state.permissions[name] = permissionFunction;
+};
+
 exports.execute = function(args, callback) {
   var command, error;
   command = exports.state.getMatchCommand(args.command);

@@ -27,6 +27,21 @@ exports.globalOption = (options) ->
 	option = new Option(options)
 	exports.state.globalOptions.push(option)
 
+exports.permission = (name, permissionFunction) ->
+	if not name?
+		throw new Error('Missing permission name')
+
+	if not _.isString(name)
+		throw new Error('Invalid permission name')
+
+	if not permissionFunction?
+		throw new Error('Missing permission function')
+
+	if not _.isFunction(permissionFunction)
+		throw new Error('Invalid permission function')
+
+	exports.state.permissions[name] = permissionFunction
+
 exports.execute = (args, callback) ->
 	command = exports.state.getMatchCommand(args.command)
 
