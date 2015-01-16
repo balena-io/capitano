@@ -350,6 +350,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.3.0
+
+- Implement permission support. Discussed in [#15](https://github.com/resin-io/capitano/issues/15).
+
 ### 1.2.0
 
 - Implement action callback support. Discussed in [#11](https://github.com/resin-io/capitano/issues/11).
