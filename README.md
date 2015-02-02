@@ -3,6 +3,7 @@ Capitano
 
 [![npm version](https://badge.fury.io/js/capitano.svg)](http://badge.fury.io/js/capitano)
 [![dependencies](https://david-dm.org/resin-io/capitano.png)](https://david-dm.org/username/repo.png)
+[![Build Status](https://travis-ci.org/resin-io/capitano.svg?branch=master)](https://travis-ci.org/resin-io/capitano)
 
 Capitano allows you to craft powerful command line applications, your way.
 
