@@ -46,6 +46,8 @@ $ myCoolApp utils print Error Something very bad happened -d
 Thu Dec 18 2014 14:49:27 GMT-0400 (BOT) Error: Something very bad happened
 ```
 
+We wrote Capitano as we couldn't find any NodeJS command line parser that met our needs. Alternatives such as [commander.js](https://github.com/tj/commander.js), albeit being very good, didn't have good support for features such as infinitely nested git-like subcommands, per-command options and complete customisation. Capitano is our attempt at creating a non opitionated command line parser that can do everything you can imagine.
+
 Features
 --------
 
