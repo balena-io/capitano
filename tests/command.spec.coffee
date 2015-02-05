@@ -366,6 +366,20 @@ describe 'Command:', ->
 			command.execute(command: 'foo bar')
 			expect(spy).to.have.been.calledOnce
 
+		describe 'given an action that throws an error', ->
+
+			beforeEach ->
+				@command = new Command
+					signature: new Signature('hello')
+					action: ->
+						throw new Error('Command Error')
+
+			it 'should catch the error and send it to the callback', (done) ->
+				@command.execute command: 'hello', (error) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Command Error')
+					done()
+
 		describe 'given a command with permissions', ->
 
 			beforeEach ->

@@ -64,7 +64,12 @@ module.exports = Command = (function() {
         if (error != null) {
           return typeof callback === "function" ? callback(error) : void 0;
         }
-        _this.action(params, parsedOptions, callback);
+        try {
+          _this.action(params, parsedOptions, callback);
+        } catch (_error) {
+          error = _error;
+          return callback(error);
+        }
         if (_this.action.length < 3) {
           return typeof callback === "function" ? callback() : void 0;
         }

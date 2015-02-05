@@ -46,7 +46,11 @@ module.exports = class Command
 
 		@applyPermissions (error) =>
 			return callback?(error) if error?
-			@action(params, parsedOptions, callback)
+
+			try
+				@action(params, parsedOptions, callback)
+			catch error
+				return callback(error)
 
 			# Means the user is not declaring the callback
 			return callback?() if @action.length < 3
