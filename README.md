@@ -353,6 +353,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.3.1
+
+- Catch action errors and send them to the callback automatically. See [#17](https://github.com/resin-io/capitano/pull/17).
+
 ### 1.3.0
 
 - Implement permission support. Discussed in [#15](https://github.com/resin-io/capitano/issues/15).
