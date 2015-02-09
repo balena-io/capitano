@@ -1,4 +1,4 @@
-var Parameter, REGEX_MULTIWORD, REGEX_OPTIONAL, REGEX_REQUIRED, REGEX_VARIADIC, parse, _;
+var Parameter, REGEX_MULTIWORD, REGEX_OPTIONAL, REGEX_REQUIRED, REGEX_STDIN, REGEX_VARIADIC, STDIN_CHARACTER, parse, _;
 
 _ = require('lodash');
 
@@ -14,6 +14,10 @@ REGEX_VARIADIC = /^[<\[](.*)[\.]{3}[>\]]$/;
 
 REGEX_MULTIWORD = /\s/;
 
+REGEX_STDIN = /^[<\[]\|(.*)[\]>]$/;
+
+STDIN_CHARACTER = '|';
+
 module.exports = Parameter = (function() {
   function Parameter(parameter) {
     if (_.isNumber(parameter)) {
@@ -23,6 +27,9 @@ module.exports = Parameter = (function() {
       throw new Error("Missing or invalid parameter: " + parameter);
     }
     this.parameter = parameter;
+    if (this.isVariadic() && this.allowsStdin()) {
+      throw new Error('Parameter can\'t be variadic and allow stdin');
+    }
   }
 
   Parameter.prototype._testRegex = function(regex) {
@@ -49,6 +56,10 @@ module.exports = Parameter = (function() {
     return this._testRegex(REGEX_MULTIWORD);
   };
 
+  Parameter.prototype.allowsStdin = function() {
+    return this.parameter[1] === STDIN_CHARACTER;
+  };
+
   Parameter.prototype.getValue = function() {
     var regex, result;
     if (this.isWord()) {
@@ -62,6 +73,9 @@ module.exports = Parameter = (function() {
     }
     if (this.isVariadic()) {
       regex = REGEX_VARIADIC;
+    }
+    if (this.allowsStdin()) {
+      regex = REGEX_STDIN;
     }
     result = this.parameter.match(regex);
     return result[1];

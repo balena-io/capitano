@@ -6,6 +6,8 @@ REGEX_REQUIRED = /^<(.*)>$/
 REGEX_OPTIONAL = /^\[(.*)\]$/
 REGEX_VARIADIC = /^[<\[](.*)[\.]{3}[>\]]$/
 REGEX_MULTIWORD = /\s/
+REGEX_STDIN = /^[<\[]\|(.*)[\]>]$/
+STDIN_CHARACTER = '|'
 
 module.exports = class Parameter
 	constructor: (parameter) ->
@@ -17,6 +19,9 @@ module.exports = class Parameter
 			throw new Error("Missing or invalid parameter: #{parameter}")
 
 		@parameter = parameter
+
+		if @isVariadic() and @allowsStdin()
+			throw new Error('Parameter can\'t be variadic and allow stdin')
 
 	_testRegex: (regex) ->
 		return regex.test(@parameter)
@@ -39,11 +44,15 @@ module.exports = class Parameter
 	isMultiWord: ->
 		return @_testRegex(REGEX_MULTIWORD)
 
+	allowsStdin: ->
+		return @parameter[1] is STDIN_CHARACTER
+
 	getValue: ->
 		return @parameter if @isWord()
 		regex = REGEX_REQUIRED if @isRequired()
 		regex = REGEX_OPTIONAL if @isOptional()
 		regex = REGEX_VARIADIC if @isVariadic()
+		regex = REGEX_STDIN if @allowsStdin()
 		result = @parameter.match(regex)
 		return result[1]
 

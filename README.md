@@ -55,6 +55,7 @@ Features
 - Global and per-command options.
 - Variadic arguments.
 - Option aliases.
+- Stdin support out of the box.
 - Separate between parsing and executing command line arguments.
 - No built-in generated help page, you roll your own.
 - No built-in commands, you have a high degree of control over your app.
@@ -79,6 +80,13 @@ Register a command. Capitano understands the following options, but you can pass
 ### signature (string)
 
 The command signature. If it's `*`, it will match anything that is not matched by other commands.
+
+You can represent a command that allows input from stdin with the following syntax:
+
+- Required: `<|foo>`.
+- Optional: `[|foo]`.
+
+Notice that you can only have **one** stdin command per signature, and it has to be the **last parameter** of the signature. See the [examples section](https://github.com/resin-io/capitano#examples) for a stdin example.
 
 ### action (function)
 
@@ -181,7 +189,7 @@ See the [Option class](https://github.com/resin-io/capitano#option) for more inf
 
 A self explanatory function that returns a command that matches a specific signature.
 
-### getMatchCommand(signature)
+### getMatchCommand(signature, callback)
 
 Get command that matches a signature, without taking parameters into account.
 
@@ -235,6 +243,10 @@ A predicate method that returns `true` if the signature has at least one variadi
 
 A predicate method that returns `true` if the signature represents a wildcard.
 
+#### Signature#allowsStdin()
+
+A predicate method that returns `true` if the signature has at least one stdin parameter.
+
 ***
 
 ### Option
@@ -265,6 +277,34 @@ Examples
 --------
 
 Capitano is very flexible, allowing you to implement all sort of crazy stuff. Here I present some common patterns that I've been doing on Capitano. If you have an interesting idea that you think it's worth to share, please submit a PR!
+
+### Stdin input
+
+```coffee
+capitano = require('capitano')
+
+capitano.command
+	signature: 'foo <|bar>'
+	description: 'a command that accepts stdin input'
+	action: (params, options, done) ->
+		console.log("The input is: #{params.bar}")
+		done()
+		
+capitano.run process.argv, (error) ->
+	throw error if error?
+```
+
+***
+
+```sh
+$ echo "Hello World" | stdinApp foo
+The input is: Hello World
+
+# Old way still works
+
+$ stdinApp foo "Hello World"
+The input is: Hello World
+```
 
 ### Generated help
 
@@ -321,14 +361,17 @@ capitano.command
 capitano.command
 	signature: 'help [command...]'
 	description: 'output general help page'
-	action: (params) ->
+	action: (params, options, done) ->
 		return outputGeneralHelp() if not params?
 		
-		command = capitano.state.getMatchCommand(params.command)
-		if not command? or command.isWildcard()
-		return capitano.defaults.actions.commandNotFound(params.command)
-		
-		console.log(command.help)
+		capitano.state.getMatchCommand params.command, (error, command) ->
+			return done(error) if error?
+
+			if not command? or command.isWildcard()
+			return capitano.defaults.actions.commandNotFound(params.command)
+			
+			console.log(command.help)
+			done()
 		
 capitano.run process.argv, (error) ->
 	throw error if error?

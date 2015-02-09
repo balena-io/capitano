@@ -1,6 +1,8 @@
-var settings, _;
+var async, settings, _;
 
 _ = require('lodash');
+
+async = require('async');
 
 settings = require('./settings');
 
@@ -16,18 +18,25 @@ exports.findCommandBySignature = function(signature) {
   });
 };
 
-exports.getMatchCommand = function(signature) {
-  var command, wildcardSignature, _i, _len, _ref;
-  _ref = exports.commands;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    command = _ref[_i];
-    if (command.isWildcard()) {
-      continue;
+exports.getMatchCommand = function(signature, callback) {
+  var commands;
+  commands = _.reject(exports.commands, function(command) {
+    return command.isWildcard();
+  });
+  return async.eachSeries(commands, function(command, done) {
+    return command.signature.matches(signature, function(result) {
+      if (!result) {
+        return done();
+      }
+      return callback(null, command);
+    });
+  }, function(error) {
+    var result, wildcardSignature;
+    if (error != null) {
+      return callback(error);
     }
-    if (command.signature.matches(signature)) {
-      return command;
-    }
-  }
-  wildcardSignature = settings.signatures.wildcard;
-  return exports.findCommandBySignature(wildcardSignature);
+    wildcardSignature = settings.signatures.wildcard;
+    result = exports.findCommandBySignature(wildcardSignature);
+    return callback(null, result);
+  });
 };
