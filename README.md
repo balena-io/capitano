@@ -415,6 +415,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.5.0
+
+- Expose internal utils object as `capitano.utils`.
+
 ### 1.4.0
 
 - Stdin support. See [#12](https://github.com/resin-io/capitano/issues/12).
