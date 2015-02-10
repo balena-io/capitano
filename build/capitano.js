@@ -14,6 +14,8 @@ exports.state = require('./state');
 
 exports.defaults = require('./settings');
 
+exports.utils = require('./utils');
+
 exports.command = function(options) {
   var command;
   options.options = _.map(options.options, function(option) {

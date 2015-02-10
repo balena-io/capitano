@@ -206,6 +206,25 @@ It includes the following fields:
 
 **Pro tip:** If you want to modify these settings, do it as early as possible (before registering any commands/global options) as some settings are used when performing the mentioned tasks.
 
+## capitano.utils
+
+A collection of handy utilities for working with Capitano.
+
+### capitano.utils.getStdin(callback)
+
+Read from stdin. This function is used when you specify a stdin parameter, such as `<|foo>`.
+
+You'll most often use the stdin parameter syntax, but this function is publicly available in case you need more control.
+
+Example:
+
+```coffee
+capitano = require('capitano')
+
+capitano.utils.getStdin (data) ->
+	console.log("We got #{data} from stdin")
+```
+
 Classes
 -------
 

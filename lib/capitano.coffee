@@ -6,6 +6,7 @@ Signature = require('./signature')
 exports.parse = require('./parse').parse
 exports.state = require('./state')
 exports.defaults = require('./settings')
+exports.utils = require('./utils')
 
 exports.command = (options) ->
 	options.options = _.map options.options, (option) ->
