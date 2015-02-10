@@ -1,8 +1,10 @@
-var Parameter, Signature, parse, settings, _;
+var Parameter, Signature, appearedMoreThanOnce, async, isLastOne, parse, settings, utils, _;
 
 _ = require('lodash');
 
 _.str = require('underscore.string');
+
+async = require('async');
 
 Parameter = require('./parameter');
 
@@ -10,26 +12,48 @@ settings = require('./settings');
 
 parse = require('./parse');
 
+utils = require('./utils');
+
+isLastOne = function(parameters, predicate) {
+  var lastParameter;
+  lastParameter = _.last(parameters);
+  return predicate(lastParameter);
+};
+
+appearedMoreThanOnce = function(parameters, predicate) {
+  var filteredParameters;
+  filteredParameters = _.filter(parameters, predicate);
+  return filteredParameters.length > 1;
+};
+
 module.exports = Signature = (function() {
   function Signature(signature) {
-    var index, variadicParameters;
+    var isStdin, isVariadic;
     if ((signature == null) || !_.isString(signature)) {
       throw new Error('Missing or invalid signature');
     }
     this.parameters = [];
     _.each(parse.split(signature), this._addParameter, this);
+    if (this.allowsStdin()) {
+      isStdin = function(parameter) {
+        return parameter.allowsStdin();
+      };
+      if (appearedMoreThanOnce(this.parameters, isStdin)) {
+        throw new Error('Signature can only contain one stdin parameter');
+      }
+      if (!isLastOne(this.parameters, isStdin)) {
+        throw new Error('The stdin parameter should be the last one');
+      }
+    }
     if (this.hasVariadicParameters()) {
-      variadicParameters = _.filter(this.parameters, function(parameter) {
+      isVariadic = function(parameter) {
         return parameter.isVariadic();
-      });
-      if (variadicParameters.length > 1) {
+      };
+      if (appearedMoreThanOnce(this.parameters, isVariadic)) {
         throw new Error('Signature can only contain one variadic parameter');
       }
-      index = _.findIndex(this.parameters, function(parameter) {
-        return parameter.isVariadic();
-      });
-      if (index !== this.parameters.length - 1) {
-        throw new Error('The variadic parameter should be the last');
+      if (!isLastOne(this.parameters, isVariadic)) {
+        throw new Error('The variadic parameter should be the last one');
       }
     }
   }
@@ -52,6 +76,12 @@ module.exports = Signature = (function() {
     });
   };
 
+  Signature.prototype.allowsStdin = function() {
+    return _.any(this.parameters, function(parameter) {
+      return parameter.allowsStdin();
+    });
+  };
+
   Signature.prototype.toString = function() {
     var parameter, result, _i, _len, _ref;
     result = [];
@@ -67,60 +97,82 @@ module.exports = Signature = (function() {
     return _.all([this.parameters.length === 1, this.parameters[0].toString() === settings.signatures.wildcard]);
   };
 
-  Signature.prototype.matches = function(command) {
-    var error;
-    try {
-      this.compileParameters(command);
-      return true;
-    } catch (_error) {
-      error = _error;
-      if (_.str.startsWith(error.message, 'Missing')) {
-        return true;
+  Signature.prototype.matches = function(command, callback) {
+    return this.compileParameters(command, function(error) {
+      if (error == null) {
+        return callback(true);
       }
-      return false;
-    }
+      if (_.str.startsWith(error.message, 'Missing')) {
+        return callback(true);
+      }
+      return callback(false);
+    }, false);
   };
 
-  Signature.prototype.compileParameters = function(command) {
-    var commandWords, comparison, item, parameter, parameterIndex, parameterValue, result, value, word, _i, _len;
+  Signature.prototype.compileParameters = function(command, callback, performStdin) {
+    var commandWords, comparison, result;
+    if (performStdin == null) {
+      performStdin = true;
+    }
     commandWords = parse.split(command);
     comparison = _.zip(this.parameters, commandWords);
     result = {};
     if (this.isWildcard()) {
-      return result;
+      return callback(null, result);
     }
-    for (_i = 0, _len = comparison.length; _i < _len; _i++) {
-      item = comparison[_i];
-      parameter = item[0];
-      word = item[1];
-      if (parameter == null) {
-        throw new Error('Signature dismatch');
-      }
-      parameterValue = parameter.getValue();
-      if (!parameter.matches(word)) {
-        if (parameter.isRequired()) {
-          throw new Error("Missing " + parameterValue);
+    return async.eachSeries(comparison, (function(_this) {
+      return function(item, done) {
+        var parameter, parameterIndex, parameterValue, value, word;
+        parameter = item[0];
+        word = item[1];
+        if (parameter == null) {
+          return callback(new Error('Signature dismatch'));
         }
-        throw new Error("" + parameterValue + " does not match " + word);
-      }
-      if (parameter.isVariadic()) {
-        parameterIndex = _.indexOf(this.parameters, parameter);
-        value = _.rest(commandWords, parameterIndex).join(' ');
-        if (parameter.isOptional() && _.isEmpty(value)) {
-          return result;
+        parameterValue = parameter.getValue();
+        if (parameter.allowsStdin() && (word == null)) {
+          if (!performStdin) {
+            return callback(null, result);
+          }
+          return utils.getStdin(function(stdin) {
+            if (parameter.isRequired() && (stdin == null)) {
+              return callback(new Error("Missing " + parameterValue));
+            }
+            if (stdin != null) {
+              result[parameterValue] = stdin;
+            }
+            return callback(null, result);
+          });
         }
-        result[parameterValue] = value;
-        return result;
-      }
-      if (!parameter.isWord() && (word != null)) {
-        if (/^\d+$/.test(word)) {
-          result[parameterValue] = _.parseInt(word);
-        } else {
-          result[parameterValue] = word;
+        if (!parameter.matches(word)) {
+          if (parameter.isRequired()) {
+            return callback(new Error("Missing " + parameterValue));
+          }
+          return callback(new Error("" + parameterValue + " does not match " + word));
         }
+        if (parameter.isVariadic()) {
+          parameterIndex = _.indexOf(_this.parameters, parameter);
+          value = _.rest(commandWords, parameterIndex).join(' ');
+          if (parameter.isOptional() && _.isEmpty(value)) {
+            return callback(null, result);
+          }
+          result[parameterValue] = value;
+          return callback(null, result);
+        }
+        if (!parameter.isWord() && (word != null)) {
+          if (/^\d+$/.test(word)) {
+            result[parameterValue] = _.parseInt(word);
+          } else {
+            result[parameterValue] = word;
+          }
+        }
+        return done();
+      };
+    })(this), function(error) {
+      if (error != null) {
+        return callback(error);
       }
-    }
-    return result;
+      return callback(null, result);
+    });
   };
 
   return Signature;

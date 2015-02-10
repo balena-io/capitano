@@ -1,8 +1,10 @@
 _ = require('lodash')
 sinon = require('sinon')
 chai = require('chai')
+chai.use(require('sinon-chai'))
 expect = chai.expect
 cliManager = require('../lib/capitano')
+utils = require('../lib/utils')
 
 describe 'Capitano:', ->
 
@@ -173,6 +175,44 @@ describe 'Capitano:', ->
 			expect ->
 				cliManager.execute(command: 'hello')
 			.to.not.throw(Error)
+
+		describe 'given a stdin command', ->
+
+			describe 'if parameter was passed', ->
+
+				it 'should execute correctly', ->
+					spy = sinon.spy()
+
+					cliManager.command
+						signature: 'hello <|name>'
+						action: spy
+
+					cliManager.execute(command: 'hello John')
+
+					expect(spy).to.have.been.calledOnce
+					expect(spy).to.have.been.calledWith(name: 'John')
+
+			describe 'if stdin was passed', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Jane')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should execute correctly', (done) ->
+					spy = sinon.spy()
+
+					cliManager.command
+						signature: 'hello <|name>'
+						action: spy
+
+					cliManager.execute command: 'hello', (error) ->
+						expect(error).to.not.exist
+						expect(spy).to.have.been.calledOnce
+						expect(spy).to.have.been.calledWith(name: 'Jane')
+						done()
 
 	describe '#run()', ->
 

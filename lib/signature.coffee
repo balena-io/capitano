@@ -1,8 +1,18 @@
 _ = require('lodash')
 _.str = require('underscore.string')
+async = require('async')
 Parameter = require('./parameter')
 settings = require('./settings')
 parse = require('./parse')
+utils = require('./utils')
+
+isLastOne = (parameters, predicate) ->
+	lastParameter = _.last(parameters)
+	return predicate(lastParameter)
+
+appearedMoreThanOnce = (parameters, predicate) ->
+	filteredParameters = _.filter(parameters, predicate)
+	return filteredParameters.length > 1
 
 module.exports = class Signature
 	constructor: (signature) ->
@@ -14,18 +24,25 @@ module.exports = class Signature
 
 		_.each(parse.split(signature), @_addParameter, this)
 
+		if @allowsStdin()
+			isStdin = (parameter) ->
+				return parameter.allowsStdin()
+
+			if appearedMoreThanOnce(@parameters, isStdin)
+				throw new Error('Signature can only contain one stdin parameter')
+
+			if not isLastOne(@parameters, isStdin)
+				throw new Error('The stdin parameter should be the last one')
+
 		if @hasVariadicParameters()
-			variadicParameters = _.filter @parameters, (parameter) ->
+			isVariadic = (parameter) ->
 				return parameter.isVariadic()
 
-			if variadicParameters.length > 1
+			if appearedMoreThanOnce(@parameters, isVariadic)
 				throw new Error('Signature can only contain one variadic parameter')
 
-			index = _.findIndex @parameters, (parameter) ->
-				return parameter.isVariadic()
-
-			if index isnt @parameters.length - 1
-				throw new Error('The variadic parameter should be the last')
+			if not isLastOne(@parameters, isVariadic)
+				throw new Error('The variadic parameter should be the last one')
 
 	_addParameter: (word) ->
 		parameter = new Parameter(word)
@@ -38,6 +55,10 @@ module.exports = class Signature
 	hasVariadicParameters: ->
 		return _.any @parameters, (parameter) ->
 			return parameter.isVariadic()
+
+	allowsStdin: ->
+		return _.any @parameters, (parameter) ->
+			return parameter.allowsStdin()
 
 	toString: ->
 		result = []
@@ -56,47 +77,72 @@ module.exports = class Signature
 	# compileParameters().
 	# Maybe there should be a third function that these
 	# two algorithms share?
-	matches: (command) ->
-		try
-			@compileParameters(command)
-			return true
-		catch error
-			if _.str.startsWith(error.message, 'Missing')
-				return true
-			return false
+	# Related to this issue, if a command accepts input from stdin
+	# matches() calls compileParameters() thus causing compileParameters()
+	# to be called twice per execution, one for testing the match command
+	# and another one to actually do the real compilation.
+	# Stdin can be grabbed once, so the result is grabbed by matches()
+	# and when compileParameters() tries to fetch stdin again, there's
+	# nothing else to retrieve.
+	matches: (command, callback) ->
+		@compileParameters command, (error) ->
+			return callback(true) if not error?
 
-	compileParameters: (command) ->
+			if _.str.startsWith(error.message, 'Missing')
+				return callback(true)
+			return callback(false)
+		, false
+
+	compileParameters: (command, callback, performStdin = true) ->
 		commandWords = parse.split(command)
 		comparison = _.zip(@parameters, commandWords)
 
 		result = {}
 
-		return result if @isWildcard()
+		return callback(null, result) if @isWildcard()
 
-		for item in comparison
+		async.eachSeries comparison, (item, done) =>
 			parameter = item[0]
 			word = item[1]
 
 			if not parameter?
-				throw new Error('Signature dismatch')
+				return callback(new Error('Signature dismatch'))
 
 			parameterValue = parameter.getValue()
 
+			if parameter.allowsStdin() and not word?
+
+				# Used to prevent matches() to retrieve the
+				# input from stdin.
+				# TODO: This should be unnecessary once matches()
+				# do not calls compileParameters() anymore.
+				return callback(null, result) if not performStdin
+
+				return utils.getStdin (stdin) ->
+
+					if parameter.isRequired() and not stdin?
+						return callback(new Error("Missing #{parameterValue}"))
+
+					if stdin?
+						result[parameterValue] = stdin
+
+					return callback(null, result)
+
 			if not parameter.matches(word)
 				if parameter.isRequired()
-					throw new Error("Missing #{parameterValue}")
+					return callback(new Error("Missing #{parameterValue}"))
 
-				throw new Error("#{parameterValue} does not match #{word}")
+				return callback(new Error("#{parameterValue} does not match #{word}"))
 
 			if parameter.isVariadic()
 				parameterIndex = _.indexOf(@parameters, parameter)
 				value = _.rest(commandWords, parameterIndex).join(' ')
 
 				if parameter.isOptional() and _.isEmpty(value)
-					return result
+					return callback(null, result)
 
 				result[parameterValue] = value
-				return result
+				return callback(null, result)
 
 			if not parameter.isWord() and word?
 				if /^\d+$/.test(word)
@@ -104,4 +150,8 @@ module.exports = class Signature
 				else
 					result[parameterValue] = word
 
-		return result
+			return done()
+
+		, (error) ->
+			return callback(error) if error?
+			return callback(null, result)

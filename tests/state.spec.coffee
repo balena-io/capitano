@@ -29,23 +29,53 @@ describe 'State:', ->
 			state.commands = []
 			state.commands.push(@command)
 
-		it 'should return the command', ->
-			result = state.getMatchCommand('foo hello')
-			expect(result).to.deep.equal(@command)
+		it 'should return the command', (done) ->
+			state.getMatchCommand 'foo hello', (error, result) =>
+				expect(error).to.not.exist
+				expect(result).to.deep.equal(@command)
+				done()
 
-		it 'should return undefined if no match', ->
-			result = state.getMatchCommand('bar baz foo')
-			expect(result).to.be.undefined
+		it 'should return undefined if no match', (done) ->
+			state.getMatchCommand 'bar baz foo', (error, result) ->
+				expect(error).to.not.exist
+				expect(result).to.be.undefined
+				done()
 
-		it 'should match variadic arguments', ->
+		it 'should match variadic arguments', (done) ->
 			state.commands = []
 			command = new Command
 				signature: new Signature('help [command...]')
 				action: _.noop
 			state.commands.push(command)
 
-			result = state.getMatchCommand('help foo bar')
-			expect(result).to.deep.equal(command)
+			state.getMatchCommand 'help foo bar', (error, result) ->
+				expect(error).to.not.exist
+				expect(result).to.deep.equal(command)
+				done()
+
+		it 'should match required stdin arguments', (done) ->
+			state.commands = []
+			command = new Command
+				signature: new Signature('foo <|bar>')
+				action: _.noop
+			state.commands.push(command)
+
+			state.getMatchCommand 'foo', (error, result) ->
+				expect(error).to.not.exist
+				expect(result).to.deep.equal(command)
+				done()
+
+		it 'should match optional stdin arguments', (done) ->
+			state.commands = []
+			command = new Command
+				signature: new Signature('foo [|bar]')
+				action: _.noop
+			state.commands.push(command)
+
+			state.getMatchCommand 'foo', (error, result) ->
+				expect(error).to.not.exist
+				expect(result).to.deep.equal(command)
+				done()
 
 		describe 'if wildcard command is defined', ->
 
@@ -56,9 +86,11 @@ describe 'State:', ->
 
 				state.commands.push(@wilcardCommand)
 
-			it 'should return that command if no match', ->
-				command = state.getMatchCommand('not defined command')
-				expect(command).to.deep.equal(@wilcardCommand)
+			it 'should return that command if no match', (done) ->
+				state.getMatchCommand 'not defined command', (error, result) =>
+					expect(error).to.not.exist
+					expect(result).to.deep.equal(@wilcardCommand)
+					done()
 
 	describe '#findCommandBySignature()', ->
 

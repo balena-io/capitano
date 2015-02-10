@@ -53,26 +53,30 @@ module.exports = Command = (function() {
   };
 
   Command.prototype.execute = function(args, callback) {
-    var params, parsedOptions;
     if (args == null) {
       args = {};
     }
-    params = this.signature.compileParameters(args.command);
-    parsedOptions = this._parseOptions(args.options);
-    return this.applyPermissions((function(_this) {
-      return function(error) {
+    return this.signature.compileParameters(args.command, (function(_this) {
+      return function(error, params) {
+        var parsedOptions;
         if (error != null) {
           return typeof callback === "function" ? callback(error) : void 0;
         }
-        try {
-          _this.action(params, parsedOptions, callback);
-        } catch (_error) {
-          error = _error;
-          return callback(error);
-        }
-        if (_this.action.length < 3) {
-          return typeof callback === "function" ? callback() : void 0;
-        }
+        parsedOptions = _this._parseOptions(args.options);
+        return _this.applyPermissions(function(error) {
+          if (error != null) {
+            return typeof callback === "function" ? callback(error) : void 0;
+          }
+          try {
+            _this.action(params, parsedOptions, callback);
+          } catch (_error) {
+            error = _error;
+            return typeof callback === "function" ? callback(error) : void 0;
+          }
+          if (_this.action.length < 3) {
+            return typeof callback === "function" ? callback() : void 0;
+          }
+        });
       };
     })(this));
   };

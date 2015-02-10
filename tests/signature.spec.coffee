@@ -1,9 +1,12 @@
+sinon = require('sinon')
 _ = require('lodash')
 chai = require('chai')
+chai.use(require('sinon-chai'))
 expect = chai.expect
 Signature = require('../lib/signature')
 Parameter = require('../lib/parameter')
 settings = require('../lib/settings')
+utils = require('../lib/utils')
 
 describe 'Signature:', ->
 
@@ -37,6 +40,16 @@ describe 'Signature:', ->
 			expect ->
 				new Signature('foo <bar...> <baz...>')
 			.to.throw(Error)
+
+		it 'should throw an error if there are multiple stdin parameters', ->
+			expect ->
+				new Signature('foo <|bar> [|baz]')
+			.to.throw('Signature can only contain one stdin parameter')
+
+		it 'should throw an error if the stdin parameter is not the last one', ->
+			expect ->
+				new Signature('foo <|bar> <baz>')
+			.to.throw('The stdin parameter should be the last one')
 
 	describe '#_addParameter()', ->
 
@@ -112,6 +125,36 @@ describe 'Signature:', ->
 			signature = new Signature('foo [bar...]')
 			expect(signature.hasVariadicParameters()).to.be.true
 
+	describe '#allowsStdin()', ->
+
+		it 'should return false if no parameters', ->
+			signature = new Signature('foo')
+			expect(signature.allowsStdin()).to.be.false
+
+		it 'should return false if no stdin parameter', ->
+			signature = new Signature('foo <bar>')
+			expect(signature.allowsStdin()).to.be.false
+
+		it 'should return false if required variadic parameter', ->
+			signature = new Signature('foo <bar...>')
+			expect(signature.allowsStdin()).to.be.false
+
+		it 'should return false if optional variadic parameter', ->
+			signature = new Signature('foo [bar...]')
+			expect(signature.allowsStdin()).to.be.false
+
+		it 'should return true if one optional stdin parameter', ->
+			signature = new Signature('foo [|bar]')
+			expect(signature.allowsStdin()).to.be.true
+
+		it 'should return true if one required stdin parameter', ->
+			signature = new Signature('foo <|bar>')
+			expect(signature.allowsStdin()).to.be.true
+
+		it 'should return true if one non stdin parameter and one stdin parameter', ->
+			signature = new Signature('foo <bar> <|baz>')
+			expect(signature.allowsStdin()).to.be.true
+
 	describe '#toString()', ->
 
 		it 'should convert a signature to string', ->
@@ -138,61 +181,71 @@ describe 'Signature:', ->
 
 	describe '#matches()', ->
 
-		it 'should match agains a wildcard', ->
+		it 'should match agains a wildcard', (done) ->
 			signature = new Signature('*')
-			result = signature.matches('foo hello')
-			expect(result).to.be.true
+			signature.matches 'foo hello', (result) ->
+				expect(result).to.be.true
+				done()
 
 		describe 'given one word signatures', ->
 
-			it 'should return true if matches', ->
+			it 'should return true if matches', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.matches('foo hello')
-				expect(result).to.be.true
+				signature.matches 'foo hello', (result) ->
+					expect(result).to.be.true
+					done()
 
-			it 'should return true if optional parameter is missing', ->
+			it 'should return true if optional parameter is missing', (done) ->
 				signature = new Signature('foo [bar]')
-				result = signature.matches('foo')
-				expect(result).to.be.true
+				signature.matches 'foo', (result) ->
+					expect(result).to.be.true
+					done()
 
-			it 'should return true if required parameter is missing', ->
+			it 'should return true if required parameter is missing', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.matches('foo')
-				expect(result).to.be.true
+				signature.matches 'foo', (result) ->
+					expect(result).to.be.true
+					done()
 
-			it 'should return false if no match', ->
+			it 'should return false if no match', (done) ->
 				signature = new Signature('foo <hello>')
-				result = signature.matches('bar hello')
-				expect(result).to.be.false
+				signature.matches 'bar hello', (result) ->
+					expect(result).to.be.false
+					done()
 
-			it 'should return false if signature exceeds command', ->
+			it 'should return false if signature exceeds command', (done) ->
 				signature = new Signature('app <id>')
-				result = signature.matches('app rm 91')
-				expect(result).to.be.false
+				signature.matches 'app rm 91', (result) ->
+					expect(result).to.be.false
+					done()
 
 		describe 'given multi word signatures', ->
 
-			it 'should return true if matches', ->
+			it 'should return true if matches', (done) ->
 				signature = new Signature('foo bar <bar>')
-				result = signature.matches('foo bar hello')
-				expect(result).to.be.true
+				signature.matches 'foo bar hello', (result) ->
+					expect(result).to.be.true
+					done()
 
 		describe 'given variadic signatures', ->
 
-			it 'should return true if matches', ->
+			it 'should return true if matches', (done) ->
 				signature = new Signature('foo bar <bar...>')
-				result = signature.matches('foo bar hello world baz')
-				expect(result).to.be.true
+				signature.matches 'foo bar hello world baz', (result) ->
+					expect(result).to.be.true
+					done()
 
-			it 'should return true if missing optional variadic parameter', ->
+			it 'should return true if missing optional variadic parameter', (done) ->
 				signature = new Signature('foo bar [bar...]')
-				result = signature.matches('foo bar')
-				expect(result).to.be.true
+				signature.matches 'foo bar', (result) ->
+					expect(result).to.be.true
+					done()
 
-			it 'should return true if missing required variadic parameter', ->
+			it 'should return true if missing required variadic parameter', (done) ->
 				signature = new Signature('foo bar <bar...>')
-				result = signature.matches('foo bar')
-				expect(result).to.be.true
+				signature.matches 'foo bar', (result) ->
+					expect(result).to.be.true
+					done()
 
 	describe '#compileParameters()', ->
 
@@ -201,222 +254,474 @@ describe 'Signature:', ->
 			beforeEach ->
 				@signature = new Signature(settings.signatures.wildcard)
 
-			it 'should return an empty object', ->
-				result = @signature.compileParameters('foo')
-				expect(result).to.deep.equal({})
+			it 'should return an empty object', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal({})
+					done()
 
 		describe 'given a signature with no parameters', ->
 
 			beforeEach ->
 				@signature = new Signature('foo')
 
-			it 'should return an empty object if it matches', ->
-				result = @signature.compileParameters('foo')
-				expect(result).to.deep.equal({})
+			it 'should return an empty object if it matches', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal({})
+					done()
 
 		describe 'given a signature with one required parameter', ->
 
 			beforeEach ->
 				@signature = new Signature('foo <bar>')
 
-			it 'should throw an error if prefix is different', ->
-				expect =>
-					@signature.compileParameters('bar hello')
-				.to.throw(Error)
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'bar hello', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command exceeds', ->
-				expect =>
-					@signature.compileParameters('foo hello world')
-				.to.throw(Error)
+			it 'should throw an error if command exceeds', (done) ->
+				@signature.compileParameters 'foo hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command misses parameter', ->
-				expect =>
-					@signature.compileParameters('foo')
-				.to.throw('Missing bar')
+			it 'should throw an error if command misses parameter', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Missing bar')
+					expect(result).to.not.exist
+					done()
 
-			it 'should return a single parameter if it matches', ->
-				result = @signature.compileParameters('foo hello')
-				expect(result).to.deep.equal
-					bar: 'hello'
+			it 'should return a single parameter if it matches', (done) ->
+				@signature.compileParameters 'foo hello', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello'
+					done()
 
 		describe 'given a signature with one optional parameter', ->
 
 			beforeEach ->
 				@signature = new Signature('foo [bar]')
 
-			it 'should throw an error if prefix is different', ->
-				expect =>
-					@signature.compileParameters('bar hello')
-				.to.throw(Error)
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'bar hello', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command exceeds', ->
-				expect =>
-					@signature.compileParameters('foo hello world')
-				.to.throw(Error)
+			it 'should throw an error if command exceeds', (done) ->
+				@signature.compileParameters 'foo hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should return an empty object if command misses parameter', ->
-				result = @signature.compileParameters('foo')
-				expect(result).to.deep.equal({})
+			it 'should return an empty object if command misses parameter', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal({})
+					done()
 
-			it 'should return a single parameter if it matches', ->
-				result = @signature.compileParameters('foo hello')
-				expect(result).to.deep.equal
-					bar: 'hello'
+			it 'should return a single parameter if it matches', (done) ->
+				@signature.compileParameters 'foo hello', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello'
+					done()
+
+		describe 'given a command with a stdin required parameter', ->
+
+			beforeEach ->
+				@signature = new Signature('foo <|bar>')
+
+			describe 'if performStdin flag is false', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should not call getStdin', (done) ->
+					@signature.compileParameters 'foo', (error, result) =>
+						expect(@utilsGetStdinStub).to.not.have.been.called
+						done()
+					, false
+
+			describe 'if performStdin flag is true', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Hello World')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should call getStdin', (done) ->
+					@signature.compileParameters 'foo', (error, result) =>
+						expect(@utilsGetStdinStub).to.have.been.calledOnce
+						done()
+					, true
+
+			describe 'if performStdin flag is undefined', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Hello World')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should call getStdin', (done) ->
+					@signature.compileParameters 'foo', (error, result) =>
+						expect(@utilsGetStdinStub).to.have.been.calledOnce
+						done()
+
+			describe 'if stdin returns data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Hello World')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should assign the parameter to the stdin output', (done) ->
+					@signature.compileParameters 'foo', (error, result) ->
+						expect(error).to.not.exist
+						expect(result).to.deep.equal
+							bar: 'Hello World'
+						done()
+
+			describe 'if stdin does not return data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, undefined)
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should throw an error', (done) ->
+					@signature.compileParameters 'foo', (error, result) ->
+						expect(error).to.be.an.instanceof(Error)
+						expect(error.message).to.equal('Missing bar')
+						expect(result).to.not.exist
+						done()
+
+		describe 'given a command with a stdin optional parameter', ->
+
+			beforeEach ->
+				@signature = new Signature('foo [|bar]')
+
+			describe 'if stdin returns data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Hello World')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should assign the parameter to the stdin output', (done) ->
+					@signature.compileParameters 'foo', (error, result) ->
+						expect(error).to.not.exist
+						expect(result).to.deep.equal
+							bar: 'Hello World'
+						done()
+
+			describe 'if stdin does not return data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, undefined)
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should do nothing', (done) ->
+					@signature.compileParameters 'foo', (error, result) ->
+						expect(error).to.not.exist
+						expect(result).to.deep.equal({})
+						done()
+
+		describe 'given a signature with a required parameter and a required stdin parameter', ->
+
+			beforeEach ->
+				@signature = new Signature('foo <bar> <|baz>')
+
+			describe 'if stdin returns data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Hello World')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should assign the parameter to the stdin output', (done) ->
+					@signature.compileParameters 'foo hello', (error, result) ->
+						expect(error).to.not.exist
+						expect(result).to.deep.equal
+							bar: 'hello'
+							baz: 'Hello World'
+						done()
+
+			describe 'if stdin does not return data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, undefined)
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should throw an error', (done) ->
+					@signature.compileParameters 'foo hello', (error, result) ->
+						expect(error).to.be.an.instanceof(Error)
+						expect(error.message).to.equal('Missing baz')
+						expect(result).to.not.exist
+						done()
+
+		describe 'given a signature with a required parameter and an optional stdin parameter', ->
+
+			beforeEach ->
+				@signature = new Signature('foo <bar> [|baz]')
+
+			describe 'if stdin returns data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, 'Hello World')
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should assign the parameter to the stdin output', (done) ->
+					@signature.compileParameters 'foo hello', (error, result) ->
+						expect(error).to.not.exist
+						expect(result).to.deep.equal
+							bar: 'hello'
+							baz: 'Hello World'
+						done()
+
+			describe 'if stdin does not return data', ->
+
+				beforeEach ->
+					@utilsGetStdinStub = sinon.stub(utils, 'getStdin')
+					@utilsGetStdinStub.callsArgWithAsync(0, undefined)
+
+				afterEach ->
+					@utilsGetStdinStub.restore()
+
+				it 'should do nothing', (done) ->
+					@signature.compileParameters 'foo hello', (error, result) ->
+						expect(error).to.not.exist
+						expect(result).to.deep.equal
+							bar: 'hello'
+						done()
 
 		describe 'given a signature with multiple required parameters', ->
 
 			beforeEach ->
 				@signature = new Signature('foo <bar> <baz>')
 
-			it 'should throw an error if prefix is different', ->
-				expect =>
-					@signature.compileParameters('bar hello world')
-				.to.throw(Error)
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'bar hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command exceeds', ->
-				expect =>
-					@signature.compileParameters('foo hello world bar')
-				.to.throw(Error)
+			it 'should throw an error if command exceeds', (done) ->
+				@signature.compileParameters 'foo hello world bar', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command misses one parameter', ->
-				expect =>
-					@signature.compileParameters('foo hello')
-				.to.throw('Missing baz')
+			it 'should throw an error if command misses one parameter', (done) ->
+				@signature.compileParameters 'foo hello', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Missing baz')
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command misses both parameters', ->
-				expect =>
-					@signature.compileParameters('foo')
-				.to.throw('Missing bar')
+			it 'should throw an error if command misses both parameters', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Missing bar')
+					expect(result).to.not.exist
+					done()
 
-			it 'should return both parameters if it matches', ->
-				result = @signature.compileParameters('foo hello world')
-				expect(result).to.deep.equal
-					bar: 'hello'
-					baz: 'world'
+			it 'should return both parameters if it matches', (done) ->
+				@signature.compileParameters 'foo hello world', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello'
+						baz: 'world'
+					done()
 
 		describe 'given a signature with mixed parameters', ->
 
 			beforeEach ->
 				@signature = new Signature('foo <bar> [baz]')
 
-			it 'should throw an error if prefix is different', ->
-				expect =>
-					@signature.compileParameters('bar hello world')
-				.to.throw(Error)
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'bar hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should throw an error if command exceeds', ->
-				expect =>
-					@signature.compileParameters('foo hello world bar')
-				.to.throw(Error)
+			it 'should throw an error if command exceeds', (done) ->
+				@signature.compileParameters 'foo hello world bar', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should return one parameter if command misses one parameter', ->
-				result = @signature.compileParameters('foo hello')
-				expect(result).to.deep.equal
-					bar: 'hello'
+			it 'should return one parameter if command misses one parameter', (done) ->
+				@signature.compileParameters 'foo hello', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello'
+					done()
 
-			it 'should throw an error if command misses both parameters', ->
-				expect =>
-					@signature.compileParameters('foo')
-				.to.throw('Missing bar')
+			it 'should throw an error if command misses both parameters', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Missing bar')
+					expect(result).to.not.exist
+					done()
 
-			it 'should return both parameters if it matches', ->
-				result = @signature.compileParameters('foo hello world')
-				expect(result).to.deep.equal
-					bar: 'hello'
-					baz: 'world'
+			it 'should return both parameters if it matches', (done) ->
+				@signature.compileParameters 'foo hello world', (error, result)  ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello'
+						baz: 'world'
+					done()
 
 		describe 'given a signature with a variadic required parameter', ->
 
 			beforeEach ->
 				@signature = new Signature('foo <bar...>')
 
-			it 'should throw an error if prefix is different', ->
-				expect =>
-					@signature.compileParameters('bar hello world')
-				.to.throw(Error)
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'bar hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should all parameters together if command exceeds', ->
-				result = @signature.compileParameters('foo hello world bar')
-				expect(result).to.deep.equal
-					bar: 'hello world bar'
+			it 'should all parameters together if command exceeds', (done) ->
+				@signature.compileParameters 'foo hello world bar', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello world bar'
+					done()
 
-			it 'should throw an error if command misses the parameter', ->
-				expect =>
-					@signature.compileParameters('foo')
-				.to.throw('Missing bar')
+			it 'should throw an error if command misses the parameter', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Missing bar')
+					expect(result).to.not.exist
+					done()
 
-			it 'should return all parameters together if it matches', ->
-				result = @signature.compileParameters('foo hello world')
-				expect(result).to.deep.equal
-					bar: 'hello world'
+			it 'should return all parameters together if it matches', (done) ->
+				@signature.compileParameters 'foo hello world', (error, result)  ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello world'
+					done()
 
 		describe 'given a signature with a variadic optional parameter', ->
 
 			beforeEach ->
 				@signature = new Signature('foo [bar...]')
 
-			it 'should throw an error if prefix is different', ->
-				expect =>
-					@signature.compileParameters('bar hello world')
-				.to.throw(Error)
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'bar hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
 
-			it 'should all parameters together if command exceeds', ->
-				result = @signature.compileParameters('foo hello world bar')
-				expect(result).to.deep.equal
-					bar: 'hello world bar'
+			it 'should all parameters together if command exceeds', (done) ->
+				@signature.compileParameters 'foo hello world bar', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello world bar'
+					done()
 
-			it 'should return an empty object if command misses the parameter', ->
-				result = @signature.compileParameters('foo')
-				expect(result).to.deep.equal({})
+			it 'should return an empty object if command misses the parameter', (done) ->
+				@signature.compileParameters 'foo', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal({})
+					done()
 
-			it 'should return all parameters together if it matches', ->
-				result = @signature.compileParameters('foo hello world')
-				expect(result).to.deep.equal
-					bar: 'hello world'
+			it 'should return all parameters together if it matches', (done) ->
+				@signature.compileParameters 'foo hello world', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello world'
+					done()
 
 		describe 'given number commands', ->
 
-			it 'should parse the numbers automatically', ->
+			it 'should parse the numbers automatically', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.compileParameters('foo 19')
-				expect(result).to.deep.equal
-					bar: 19
+				signature.compileParameters 'foo 19', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 19
+					done()
 
-			it 'should match with a string that starts with a number', ->
+			it 'should match with a string that starts with a number', (done) ->
 				signature = new Signature('<foo>')
-				result = signature.compileParameters('1bar')
-				expect(result).to.deep.equal(foo: '1bar')
+				signature.compileParameters '1bar', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal(foo: '1bar')
+					done()
 
 		describe 'given path commands', ->
 
-			it 'should be able to parse absolute paths', ->
+			it 'should be able to parse absolute paths', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.compileParameters('foo /Users/me/foo/bar')
-				expect(result).to.deep.equal
-					bar: '/Users/me/foo/bar'
+				signature.compileParameters 'foo /Users/me/foo/bar', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: '/Users/me/foo/bar'
+					done()
 
-			it 'should be able to parse relative paths', ->
+			it 'should be able to parse relative paths', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.compileParameters('foo ../hello/world')
-				expect(result).to.deep.equal
-					bar: '../hello/world'
+				signature.compileParameters 'foo ../hello/world', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: '../hello/world'
+					done()
 
-			it 'should be able to parse home relative paths', ->
+			it 'should be able to parse home relative paths', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.compileParameters('foo ~/.ssh/id_rsa.pub')
-				expect(result).to.deep.equal
-					bar: '~/.ssh/id_rsa.pub'
+				signature.compileParameters 'foo ~/.ssh/id_rsa.pub', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: '~/.ssh/id_rsa.pub'
+					done()
 
 		describe 'given quoted multi word command words', ->
 
-			it 'should parse single quoted multi words correctly', ->
+			it 'should parse single quoted multi words correctly', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.compileParameters('foo \'hello world\'')
-				expect(result).to.deep.equal
-					bar: 'hello world'
+				signature.compileParameters 'foo \'hello world\'', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello world'
+					done()
 
-			it 'should parse double quoted multi words correctly', ->
+			it 'should parse double quoted multi words correctly', (done) ->
 				signature = new Signature('foo <bar>')
-				result = signature.compileParameters('foo "hello world"')
-				expect(result).to.deep.equal
-					bar: 'hello world'
+				signature.compileParameters 'foo "hello world"', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						bar: 'hello world'
+					done()

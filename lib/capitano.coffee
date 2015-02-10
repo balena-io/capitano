@@ -43,15 +43,16 @@ exports.permission = (name, permissionFunction) ->
 	exports.state.permissions[name] = permissionFunction
 
 exports.execute = (args, callback) ->
-	command = exports.state.getMatchCommand(args.command)
+	exports.state.getMatchCommand args.command, (error, command) ->
+		return callback?(error) if error?
 
-	if not command?
-		return exports.defaults.actions.commandNotFound(args.command)
+		if not command?
+			return exports.defaults.actions.commandNotFound(args.command)
 
-	try
-		command.execute(args, callback)
-	catch error
-		return callback?(error)
+		try
+			command.execute(args, callback)
+		catch error
+			return callback?(error)
 
 # Handy shortcut
 exports.run = (argv, callback) ->

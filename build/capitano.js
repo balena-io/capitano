@@ -51,17 +51,20 @@ exports.permission = function(name, permissionFunction) {
 };
 
 exports.execute = function(args, callback) {
-  var command, error;
-  command = exports.state.getMatchCommand(args.command);
-  if (command == null) {
-    return exports.defaults.actions.commandNotFound(args.command);
-  }
-  try {
-    return command.execute(args, callback);
-  } catch (_error) {
-    error = _error;
-    return typeof callback === "function" ? callback(error) : void 0;
-  }
+  return exports.state.getMatchCommand(args.command, function(error, command) {
+    if (error != null) {
+      return typeof callback === "function" ? callback(error) : void 0;
+    }
+    if (command == null) {
+      return exports.defaults.actions.commandNotFound(args.command);
+    }
+    try {
+      return command.execute(args, callback);
+    } catch (_error) {
+      error = _error;
+      return typeof callback === "function" ? callback(error) : void 0;
+    }
+  });
 };
 
 exports.run = function(argv, callback) {

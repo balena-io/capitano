@@ -21,6 +21,16 @@ describe 'Parameter:', ->
 				new Parameter([ 1, 2, 3 ])
 			.to.throw(Error)
 
+		it 'should return an error if required variadic and has stdin support', ->
+			expect ->
+				new Parameter('<|foo...>')
+			.to.throw('Parameter can\'t be variadic and allow stdin')
+
+		it 'should return an error if optional variadic and has stdin support', ->
+			expect ->
+				new Parameter('[|foo...]')
+			.to.throw('Parameter can\'t be variadic and allow stdin')
+
 	describe '#isRequired()', ->
 
 		it 'should return true for required parameters', ->
@@ -203,6 +213,58 @@ describe 'Parameter:', ->
 			parameter = new Parameter('[foo...]')
 			expect(parameter.isMultiWord()).to.be.false
 
+	describe '#allowsStdin()', ->
+
+		it 'should return false for required parameters', ->
+			parameter = new Parameter('<foo>')
+			expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return false for variadic required parameters', ->
+			parameter = new Parameter('<foo...>')
+			expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return false for multi word required parameters', ->
+			parameter = new Parameter('<foo bar>')
+			expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return false for optional parameters', ->
+			parameter = new Parameter('[foo]')
+			expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return false for variadic optional parameters', ->
+			parameter = new Parameter('[foo...]')
+			expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return false for invalid parameters', ->
+			for input in [
+				'foo'
+				'<foo]'
+				'[foo>'
+				''
+			]
+				parameter = new Parameter(input)
+				expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return true if required with |', ->
+			parameter = new Parameter('<|foo>')
+			expect(parameter.allowsStdin()).to.be.true
+
+		it 'should return true if optional with |', ->
+			parameter = new Parameter('[|foo]')
+			expect(parameter.allowsStdin()).to.be.true
+
+		it 'should return false if no parameter with |', ->
+			parameter = new Parameter('|foo')
+			expect(parameter.allowsStdin()).to.be.false
+
+		it 'should return true if multi word required with |', ->
+			parameter = new Parameter('<|foo bar>')
+			expect(parameter.allowsStdin()).to.be.true
+
+		it 'should return true if multi word optional with |', ->
+			parameter = new Parameter('[|foo bar]')
+			expect(parameter.allowsStdin()).to.be.true
+
 	describe '#getValue()', ->
 
 		it 'should get word values', ->
@@ -235,6 +297,14 @@ describe 'Parameter:', ->
 
 		it 'should get the value of variadic optional parameter', ->
 			parameter = new Parameter('[foo...]')
+			expect(parameter.getValue()).to.equal('foo')
+
+		it 'should get the value of stdin optional parameter', ->
+			parameter = new Parameter('[|foo]')
+			expect(parameter.getValue()).to.equal('foo')
+
+		it 'should get the value of stdin required parameter', ->
+			parameter = new Parameter('<|foo>')
 			expect(parameter.getValue()).to.equal('foo')
 
 	describe '#getType()', ->

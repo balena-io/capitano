@@ -41,19 +41,21 @@ module.exports = class Command
 		parsedOptions = parse.parseOptions(allOptions, options)
 
 	execute: (args = {}, callback) ->
-		params = @signature.compileParameters(args.command)
-		parsedOptions = @_parseOptions(args.options)
-
-		@applyPermissions (error) =>
+		@signature.compileParameters args.command, (error, params) =>
 			return callback?(error) if error?
 
-			try
-				@action(params, parsedOptions, callback)
-			catch error
-				return callback(error)
+			parsedOptions = @_parseOptions(args.options)
 
-			# Means the user is not declaring the callback
-			return callback?() if @action.length < 3
+			@applyPermissions (error) =>
+				return callback?(error) if error?
+
+				try
+					@action(params, parsedOptions, callback)
+				catch error
+					return callback?(error)
+
+				# Means the user is not declaring the callback
+				return callback?() if @action.length < 3
 
 	option: (option) ->
 		if option not instanceof Option
