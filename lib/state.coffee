@@ -19,6 +19,13 @@ exports.getMatchCommand = (signature, callback) ->
 	async.eachSeries commands, (command, done) ->
 		command.signature.matches signature, (result) ->
 			return done() if not result
+
+			# TODO: Breaking from the async look this way may
+			# cause a memory leak.
+			# One possible solution is to call done() with the result
+			# tricking async that is an error, and handle accordingly
+			# in the final callback. However the solution looks ugly.
+			# Search for alternatives
 			return callback(null, command)
 	, (error) ->
 		return callback(error) if error?
