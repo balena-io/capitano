@@ -396,6 +396,12 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.4.0
+
+- Stdin support. See [#12](https://github.com/resin-io/capitano/issues/12).
+
+Notice `capitano.state.getMatchCommand()` is now async.
+
 ### 1.3.1
 
 - Catch action errors and send them to the callback automatically. See [#17](https://github.com/resin-io/capitano/pull/17).
