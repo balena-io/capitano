@@ -1,4 +1,6 @@
 stdin = require('get-stdin')
+isElevated = require('is-elevated')
 
-# Wrap stdin in order to being able to mock it with Sinon.
+# Wrap lonely functions for stubbing purposes
 exports.getStdin = stdin
+exports.isElevated = isElevated

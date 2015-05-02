@@ -40,6 +40,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "get-stdin": "^4.0.1",
+    "is-elevated": "^1.0.0",
     "lodash": "~2.4.1",
     "minimist": "~1.1.0",
     "underscore.string": "~2.4.0"

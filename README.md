@@ -104,6 +104,10 @@ Require a certain previously registered permission by name. If the permission re
 
 Notice that Capitano doesn't currently supports passing an array of permissions. If you have that specific use case, you'll have to create a new permission that combines the other ones.
 
+### root (boolean)
+
+If you specify this option to true, then the command will only be runnable by a user with admin privileges, or prefixed by `sudo`.
+
 ## capitano.globalOption(options)
 
 Register a global option, which will be accessible from every command (and from outside too!) so be careful about naming collisions!
