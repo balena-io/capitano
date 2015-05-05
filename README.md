@@ -140,6 +140,12 @@ Run and execute the application given a set of arguments (usually `process.argv`
 capitano.run(process.argv)
 ```
 
+This is also the command you need to use if you need to call a command from another command. For example:
+
+```coffee
+capitano.run('my other command --foo bar', callback)
+```
+
 **Note:** `capitano.run` is a shorcut function for `capitano.execute(capitano.parse(argv), callback)`. You will usually use this function, however you can use `parse()` and `execute()` in particular situations when you need to differenciate between parsing and executing the commands.
 
 ## capitano.parse(argv)
