@@ -1,4 +1,4 @@
-var Command, Option, Signature, parse, settings, state, _;
+var Command, Option, Signature, parse, settings, state, utils, _;
 
 _ = require('lodash');
 
@@ -13,6 +13,8 @@ state = require('./state');
 Option = require('./option');
 
 Signature = require('./signature');
+
+utils = require('./utils');
 
 module.exports = Command = (function() {
   function Command(options) {
@@ -52,30 +54,46 @@ module.exports = Command = (function() {
     return parsedOptions = parse.parseOptions(allOptions, options);
   };
 
+  Command.prototype._checkElevation = function(callback) {
+    if (this.root != null) {
+      return utils.isElevated(callback);
+    } else {
+      return callback(null, true);
+    }
+  };
+
   Command.prototype.execute = function(args, callback) {
     if (args == null) {
       args = {};
     }
     return this.signature.compileParameters(args.command, (function(_this) {
       return function(error, params) {
-        var parsedOptions;
         if (error != null) {
           return typeof callback === "function" ? callback(error) : void 0;
         }
-        parsedOptions = _this._parseOptions(args.options);
-        return _this.applyPermissions(function(error) {
+        return _this._checkElevation(function(error, isElevated) {
+          var parsedOptions;
           if (error != null) {
             return typeof callback === "function" ? callback(error) : void 0;
           }
-          try {
-            _this.action(params, parsedOptions, callback);
-          } catch (_error) {
-            error = _error;
-            return typeof callback === "function" ? callback(error) : void 0;
+          if (_this.root && !isElevated) {
+            return callback(new Error('You need admin privileges to run this command'));
           }
-          if (_this.action.length < 3) {
-            return typeof callback === "function" ? callback() : void 0;
-          }
+          parsedOptions = _this._parseOptions(args.options);
+          return _this.applyPermissions(function(error) {
+            if (error != null) {
+              return typeof callback === "function" ? callback(error) : void 0;
+            }
+            try {
+              _this.action(params, parsedOptions, callback);
+            } catch (_error) {
+              error = _error;
+              return typeof callback === "function" ? callback(error) : void 0;
+            }
+            if (_this.action.length < 3) {
+              return typeof callback === "function" ? callback() : void 0;
+            }
+          });
         });
       };
     })(this));

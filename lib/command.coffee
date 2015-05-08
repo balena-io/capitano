@@ -5,6 +5,7 @@ settings = require('./settings')
 state = require('./state')
 Option = require('./option')
 Signature = require('./signature')
+utils = require('./utils')
 
 module.exports = class Command
 	constructor: (options = {}) ->
@@ -40,22 +41,35 @@ module.exports = class Command
 		allOptions = _.union(state.globalOptions, @options)
 		parsedOptions = parse.parseOptions(allOptions, options)
 
+	_checkElevation: (callback) ->
+		if @root?
+			utils.isElevated(callback)
+		else
+			return callback(null, true)
+
 	execute: (args = {}, callback) ->
+
 		@signature.compileParameters args.command, (error, params) =>
 			return callback?(error) if error?
 
-			parsedOptions = @_parseOptions(args.options)
-
-			@applyPermissions (error) =>
+			@_checkElevation (error, isElevated) =>
 				return callback?(error) if error?
 
-				try
-					@action(params, parsedOptions, callback)
-				catch error
-					return callback?(error)
+				if @root and not isElevated
+					return callback(new Error('You need admin privileges to run this command'))
 
-				# Means the user is not declaring the callback
-				return callback?() if @action.length < 3
+				parsedOptions = @_parseOptions(args.options)
+
+				@applyPermissions (error) =>
+					return callback?(error) if error?
+
+					try
+						@action(params, parsedOptions, callback)
+					catch error
+						return callback?(error)
+
+					# Means the user is not declaring the callback
+					return callback?() if @action.length < 3
 
 	option: (option) ->
 		if option not instanceof Option

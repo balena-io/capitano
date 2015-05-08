@@ -8,6 +8,7 @@ Option = require('../lib/option')
 Signature = require('../lib/signature')
 settings = require('../lib/settings')
 state = require('../lib/state')
+utils = require('../lib/utils')
 
 describe 'Command:', ->
 
@@ -379,6 +380,50 @@ describe 'Command:', ->
 					expect(error).to.be.an.instanceof(Error)
 					expect(error.message).to.equal('Command Error')
 					done()
+
+		describe 'given a command with the root property', ->
+
+			beforeEach ->
+				@actionSpy = sinon.spy()
+				@command = new Command
+					signature: new Signature('foo')
+					action: @actionSpy
+					root: true
+
+			describe 'given the user is root', ->
+
+				beforeEach ->
+					@utilsIsElevatedStub = sinon.stub(utils, 'isElevated')
+					@utilsIsElevatedStub.yields(null, true)
+
+				afterEach ->
+					@utilsIsElevatedStub.restore()
+
+				it 'should execute the action normally', (done) ->
+					@command.execute command: 'foo', (error) =>
+						expect(error).to.not.exist
+						expect(@actionSpy).to.have.been.called
+						done()
+
+			describe 'given the user is not root', ->
+
+				beforeEach ->
+					@utilsIsElevatedStub = sinon.stub(utils, 'isElevated')
+					@utilsIsElevatedStub.yields(null, false)
+
+				afterEach ->
+					@utilsIsElevatedStub.restore()
+
+				it 'should not execute the action', (done) ->
+					@command.execute command: 'foo', =>
+						expect(@actionSpy).to.not.have.been.called
+						done()
+
+				it 'should return an error', (done) ->
+					@command.execute command: 'foo', (error) ->
+						expect(error).to.be.an.instanceof(Error)
+						expect(error.message).to.equal('You need admin privileges to run this command')
+						done()
 
 		describe 'given a command with permissions', ->
 
