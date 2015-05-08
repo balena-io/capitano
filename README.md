@@ -425,6 +425,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.6.0
+
+- Implement root property support.
+
 ### 1.5.0
 
 - Expose internal utils object as `capitano.utils`.
