@@ -1,4 +1,4 @@
-var Option, Signature, isValidAlias, parse, _;
+var Option, Signature, _, isValidAlias, parse;
 
 _ = require('lodash');
 

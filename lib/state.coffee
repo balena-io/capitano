@@ -7,7 +7,7 @@ exports.globalOptions = []
 exports.permissions = {}
 
 exports.findCommandBySignature = (signature) ->
-	return _.findWhere exports.commands, (command) ->
+	return _.find exports.commands, (command) ->
 		return command.signature.toString() is signature
 
 exports.getMatchCommand = (signature, callback) ->
