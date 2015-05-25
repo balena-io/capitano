@@ -1,4 +1,4 @@
-var Parameter, Signature, appearedMoreThanOnce, async, isLastOne, parse, settings, utils, _;
+var Parameter, Signature, _, appearedMoreThanOnce, async, isLastOne, parse, settings, utils;
 
 _ = require('lodash');
 
@@ -83,11 +83,11 @@ module.exports = Signature = (function() {
   };
 
   Signature.prototype.toString = function() {
-    var parameter, result, _i, _len, _ref;
+    var i, len, parameter, ref, result;
     result = [];
-    _ref = this.parameters;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      parameter = _ref[_i];
+    ref = this.parameters;
+    for (i = 0, len = ref.length; i < len; i++) {
+      parameter = ref[i];
       result.push(parameter.toString());
     }
     return result.join(' ');
@@ -147,7 +147,7 @@ module.exports = Signature = (function() {
           if (parameter.isRequired()) {
             return callback(new Error("Missing " + parameterValue));
           }
-          return callback(new Error("" + parameterValue + " does not match " + word));
+          return callback(new Error(parameterValue + " does not match " + word));
         }
         if (parameter.isVariadic()) {
           parameterIndex = _.indexOf(_this.parameters, parameter);

@@ -1,4 +1,4 @@
-var Command, Option, Signature, parse, settings, state, utils, _;
+var Command, Option, Signature, _, parse, settings, state, utils;
 
 _ = require('lodash');
 

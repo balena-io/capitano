@@ -1,4 +1,4 @@
-var Parameter, minimist, settings, state, _;
+var Parameter, _, minimist, settings, state;
 
 _ = require('lodash');
 
@@ -50,12 +50,12 @@ exports.split = function(string) {
     return [];
   }
   regex = '';
-  pair = function(_arg) {
+  pair = function(arg) {
     var end, start;
-    start = _arg[0], end = _arg[1];
+    start = arg[0], end = arg[1];
     start = '\\' + start;
     end = '\\' + end;
-    return regex += "" + start + "[^" + end + "]+" + end + "|";
+    return regex += start + "[^" + end + "]+" + end + "|";
   };
   pair('[]');
   pair('<>');
@@ -71,13 +71,13 @@ exports.split = function(string) {
 };
 
 exports.parseOptions = function(definedOptions, options) {
-  var definedOption, result, signature, value, _i, _len;
+  var definedOption, i, len, result, signature, value;
   if (options == null) {
     options = {};
   }
   result = {};
-  for (_i = 0, _len = definedOptions.length; _i < _len; _i++) {
-    definedOption = definedOptions[_i];
+  for (i = 0, len = definedOptions.length; i < len; i++) {
+    definedOption = definedOptions[i];
     signature = definedOption.signature;
     value = definedOption.getOptionsValue(options);
     if ((definedOption.required != null) && (value == null)) {

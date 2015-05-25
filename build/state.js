@@ -1,4 +1,4 @@
-var async, settings, _;
+var _, async, settings;
 
 _ = require('lodash');
 
