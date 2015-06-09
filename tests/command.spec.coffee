@@ -332,40 +332,40 @@ describe 'Command:', ->
 				}
 				done()
 
-		it 'should be able to call the done callback manually', ->
-			spy = sinon.spy()
+		it 'should be able to call the done callback manually', (done) ->
+			command = new Command
+				signature: new Signature('foo <bar>')
+				action: (params, options, callback) ->
+					return callback(null, 123)
+
+			command.execute command: 'foo bar', (error, data) ->
+				expect(error).to.not.exist
+				expect(data).to.equal(123)
+				done()
+
+		it 'should be able to call the done callback with an error', (done) ->
+			cliError = new Error('Test error')
 
 			command = new Command
 				signature: new Signature('foo <bar>')
 				action: (params, options, callback) ->
-					return callback()
+					return callback(cliError)
 
-			command.execute(command: 'foo bar', spy)
+			command.execute command: 'foo bar', (error) ->
+				expect(error).to.deep.equal(cliError)
+				done()
 
-			expect(spy).to.have.been.calledOnce
-
-		it 'should be able to call the done callback with an error', ->
-			spy = sinon.spy()
-			error = new Error('Test error')
-
-			command = new Command
-				signature: new Signature('foo <bar>')
-				action: (params, options, callback) ->
-					return callback(error)
-
-			command.execute(command: 'foo bar', spy)
-
-			expect(spy).to.have.been.calledWithExactly(error)
-
-		it 'should call the action if no callback', ->
+		it 'should call the action if no callback', (done) ->
 			spy = sinon.spy()
 
 			command = new Command
 				signature: new Signature('foo <bar>')
 				action: spy
 
-			command.execute(command: 'foo bar')
-			expect(spy).to.have.been.calledOnce
+			command.execute command: 'foo bar', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledOnce
+				done()
 
 		describe 'given an action that throws an error', ->
 

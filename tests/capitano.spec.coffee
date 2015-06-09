@@ -108,17 +108,18 @@ describe 'Capitano:', ->
 
 	describe '#execute()', ->
 
-		it 'should execute a command', ->
+		it 'should execute a command', (done) ->
 			spy = sinon.spy()
 
 			cliManager.command
 				signature: 'hello <name>'
 				action: spy
 
-			cliManager.execute(command: 'hello John')
-
-			expect(spy).to.have.been.calledOnce
-			expect(spy).to.have.been.calledWith(name: 'John')
+			cliManager.execute command: 'hello John', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledOnce
+				expect(spy).to.have.been.calledWith(name: 'John')
+				done()
 
 		it 'should call commandNotFound if command not found', ->
 			commandNotFoundStub = sinon.stub(cliManager.defaults.actions, 'commandNotFound')
@@ -180,17 +181,18 @@ describe 'Capitano:', ->
 
 			describe 'if parameter was passed', ->
 
-				it 'should execute correctly', ->
+				it 'should execute correctly', (done) ->
 					spy = sinon.spy()
 
 					cliManager.command
 						signature: 'hello <|name>'
 						action: spy
 
-					cliManager.execute(command: 'hello John')
-
-					expect(spy).to.have.been.calledOnce
-					expect(spy).to.have.been.calledWith(name: 'John')
+					cliManager.execute command: 'hello John', (error) ->
+						expect(error).to.not.exist
+						expect(spy).to.have.been.calledOnce
+						expect(spy).to.have.been.calledWith(name: 'John')
+						done()
 
 			describe 'if stdin was passed', ->
 
@@ -216,16 +218,18 @@ describe 'Capitano:', ->
 
 	describe '#run()', ->
 
-		it 'should parse and execute a command', ->
+		it 'should parse and execute a command', (done) ->
 			spy = sinon.spy()
 
 			cliManager.command
 				signature: 'hello <name>'
 				action: spy
 
-			cliManager.run('hello John')
-			expect(spy).to.have.been.calledOnce
-			expect(spy).to.have.been.calledWith(name: 'John')
+			cliManager.run 'hello John', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledOnce
+				expect(spy).to.have.been.calledWith(name: 'John')
+				done()
 
 		it 'should pass any error to the callback', (done) ->
 			cliManager.command
