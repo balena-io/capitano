@@ -231,6 +231,23 @@ describe 'Capitano:', ->
 				expect(spy).to.have.been.calledWith(name: 'John')
 				done()
 
+		it 'should pass an option value starting with a number correctly', (done) ->
+			spy = sinon.spy()
+
+			cliManager.command
+				signature: 'hello'
+				action: spy
+				options: [
+					signature: 'application'
+					parameter: 'application'
+				]
+
+			cliManager.run 'hello --application 10Jun2014', (error) ->
+				expect(error).to.not.exist
+				expect(spy).to.have.been.calledOnce
+				expect(spy).to.have.been.calledWith({}, application: '10Jun2014')
+				done()
+
 		it 'should pass any error to the callback', (done) ->
 			cliManager.command
 				signature: 'hello <name>'

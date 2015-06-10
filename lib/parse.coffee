@@ -76,6 +76,10 @@ exports.parseOptions = (definedOptions, options = {}) ->
 				throw new Error("Option #{definedOption.signature} is required")
 
 		continue if not definedOption.matches(value)
-		result[signature] = _.parseInt(value) or value
+
+		if /^\d+$/.test(value)
+			value = _.parseInt(value)
+
+		result[signature] = value
 
 	return result

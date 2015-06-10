@@ -290,6 +290,32 @@ describe 'Parse:', ->
 				foo: 'baz'
 				quiet: true
 
+		it 'should parse options starting with a number correctly', ->
+			definedOptions = []
+			definedOptions.push new Option
+				signature: new Signature('foo')
+				parameter: 'bar'
+
+			options =
+				foo: '10foobar'
+
+			result = parse.parseOptions(definedOptions, options)
+			expect(result).to.deep.equal
+				foo: '10foobar'
+
+		it 'should parse options containing integers as numbers', ->
+			definedOptions = []
+			definedOptions.push new Option
+				signature: new Signature('foo')
+				parameter: 'bar'
+
+			options =
+				foo: '10'
+
+			result = parse.parseOptions(definedOptions, options)
+			expect(result).to.deep.equal
+				foo: 10
+
 		it 'should discard non matched options', ->
 			definedOptions = []
 			definedOptions.push new Option
