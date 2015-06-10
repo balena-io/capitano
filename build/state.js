@@ -13,7 +13,7 @@ exports.globalOptions = [];
 exports.permissions = {};
 
 exports.findCommandBySignature = function(signature) {
-  return _.findWhere(exports.commands, function(command) {
+  return _.find(exports.commands, function(command) {
     return command.signature.toString() === signature;
   });
 };

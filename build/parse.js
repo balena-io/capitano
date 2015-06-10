@@ -90,7 +90,10 @@ exports.parseOptions = function(definedOptions, options) {
     if (!definedOption.matches(value)) {
       continue;
     }
-    result[signature] = _.parseInt(value) || value;
+    if (/^\d+$/.test(value)) {
+      value = _.parseInt(value);
+    }
+    result[signature] = value;
   }
   return result;
 };
