@@ -426,6 +426,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.6.1
+
+- Fix issue with command option values that started with numbers.
+
 ### 1.6.0
 
 - Implement root property support.
