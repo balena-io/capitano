@@ -77,7 +77,9 @@ module.exports = Command = (function() {
             return typeof callback === "function" ? callback(error) : void 0;
           }
           if (_this.root && !isElevated) {
-            return callback(new Error('You need admin privileges to run this command'));
+            error = new Error('You need admin privileges to run this command');
+            error.code = 'EACCES';
+            return callback(error);
           }
           parsedOptions = _this._parseOptions(args.options);
           return _this.applyPermissions(function(error) {

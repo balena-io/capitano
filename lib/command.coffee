@@ -56,7 +56,9 @@ module.exports = class Command
 				return callback?(error) if error?
 
 				if @root and not isElevated
-					return callback(new Error('You need admin privileges to run this command'))
+					error = new Error('You need admin privileges to run this command')
+					error.code = 'EACCES'
+					return callback(error)
 
 				parsedOptions = @_parseOptions(args.options)
 

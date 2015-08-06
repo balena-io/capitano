@@ -423,6 +423,7 @@ describe 'Command:', ->
 					@command.execute command: 'foo', (error) ->
 						expect(error).to.be.an.instanceof(Error)
 						expect(error.message).to.equal('You need admin privileges to run this command')
+						expect(error.code).to.equal('EACCES')
 						done()
 
 		describe 'given a command with permissions', ->
