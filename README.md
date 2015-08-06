@@ -426,6 +426,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.6.2
+
+- Add `EACCES` code to the error thrown on "root" commands.
+
 ### 1.6.1
 
 - Fix issue with command option values that started with numbers.
