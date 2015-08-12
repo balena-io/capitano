@@ -1,4 +1,5 @@
 _ = require('lodash')
+_.str = require('underscore.string')
 parse = require('./parse')
 Signature = require('./signature')
 
@@ -28,6 +29,7 @@ module.exports = class Option
 
 		_.defaults options,
 			boolean: false
+			alias: []
 
 		_.extend(this, options)
 
@@ -49,3 +51,12 @@ module.exports = class Option
 			@boolean and not _.isBoolean(value)
 			not @boolean and _.isBoolean(value)
 		]
+
+	toString: ->
+		signatures = _.map [ @signature.toString() ].concat(@alias), (signature) ->
+			return "-#{signature}" if signature.length <= 1
+			return "--#{signature}"
+
+		result = _.str.toSentence(signatures, ', ', ', ')
+		result += " <#{@parameter}>" if @parameter?
+		return result
