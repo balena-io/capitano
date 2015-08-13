@@ -426,6 +426,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.7.0
+
+- Add `option#toString()` method as an utility build help pages.
+
 ### 1.6.2
 
 - Add `EACCES` code to the error thrown on "root" commands.
