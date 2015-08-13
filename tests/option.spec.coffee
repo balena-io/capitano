@@ -175,3 +175,113 @@ describe 'Option:', ->
 
 				options = c: 'baz'
 				expect(@option.getOptionsValue(options)).to.equal('baz')
+
+	describe '#toString()', ->
+
+		it 'should represent a multiletter boolean option with no aliases', ->
+			option = new Option
+				signature: new Signature('foo')
+				boolean: true
+
+			expect(option.toString()).to.equal('--foo')
+
+		it 'should represent a monoletter boolean option with no aliases', ->
+			option = new Option
+				signature: new Signature('f')
+				boolean: true
+
+			expect(option.toString()).to.equal('-f')
+
+		it 'should represent a multiletter parameter option with no aliases', ->
+			option = new Option
+				signature: new Signature('foo')
+				parameter: 'bar'
+
+			expect(option.toString()).to.equal('--foo <bar>')
+
+		it 'should represent a monoletter parameter option with no aliases', ->
+			option = new Option
+				signature: new Signature('f')
+				parameter: 'bar'
+
+			expect(option.toString()).to.equal('-f <bar>')
+
+		it 'should represent a multiletter boolean option with one multiletter alias', ->
+			option = new Option
+				signature: new Signature('foo')
+				boolean: true
+				alias: 'bar'
+
+			expect(option.toString()).to.equal('--foo, --bar')
+
+		it 'should represent a multiletter boolean option with one monoletter alias', ->
+			option = new Option
+				signature: new Signature('foo')
+				boolean: true
+				alias: 'f'
+
+			expect(option.toString()).to.equal('--foo, -f')
+
+		it 'should represent a monoletter boolean option with one monoletter alias', ->
+			option = new Option
+				signature: new Signature('f')
+				boolean: true
+				alias: 'b'
+
+			expect(option.toString()).to.equal('-f, -b')
+
+		it 'should represent a monoletter boolean option with one multiletter alias', ->
+			option = new Option
+				signature: new Signature('f')
+				boolean: true
+				alias: 'bar'
+
+			expect(option.toString()).to.equal('-f, --bar')
+
+		it 'should represent a multiletter parameter option with one multiletter alias', ->
+			option = new Option
+				signature: new Signature('foo')
+				parameter: 'bar'
+				alias: 'bar'
+
+			expect(option.toString()).to.equal('--foo, --bar <bar>')
+
+		it 'should represent a multiletter parameter option with one monoletter alias', ->
+			option = new Option
+				signature: new Signature('foo')
+				parameter: 'bar'
+				alias: 'b'
+
+			expect(option.toString()).to.equal('--foo, -b <bar>')
+
+		it 'should represent a monoletter parameter option with one monoletter alias', ->
+			option = new Option
+				signature: new Signature('f')
+				parameter: 'bar'
+				alias: 'b'
+
+			expect(option.toString()).to.equal('-f, -b <bar>')
+
+		it 'should represent a monoletter parameter option with one multiletter alias', ->
+			option = new Option
+				signature: new Signature('f')
+				parameter: 'bar'
+				alias: 'bar'
+
+			expect(option.toString()).to.equal('-f, --bar <bar>')
+
+		it 'should represent a multiletter boolean option with aliases', ->
+			option = new Option
+				signature: new Signature('foo')
+				boolean: true
+				alias: [ 'f', 'bar' ]
+
+			expect(option.toString()).to.equal('--foo, -f, --bar')
+
+		it 'should represent a multiletter parameter option with aliases', ->
+			option = new Option
+				signature: new Signature('foo')
+				parameter: 'bar'
+				alias: [ 'f', 'baz' ]
+
+			expect(option.toString()).to.equal('--foo, -f, --baz <bar>')

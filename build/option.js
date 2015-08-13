@@ -2,6 +2,8 @@ var Option, Signature, _, isValidAlias, parse;
 
 _ = require('lodash');
 
+_.str = require('underscore.string');
+
 parse = require('./parse');
 
 Signature = require('./signature');
@@ -34,7 +36,8 @@ module.exports = Option = (function() {
       throw new Error('Missing parameter');
     }
     _.defaults(options, {
-      boolean: false
+      boolean: false,
+      alias: []
     });
     _.extend(this, options);
   }
@@ -53,6 +56,21 @@ module.exports = Option = (function() {
       return false;
     }
     return !_.any([this.boolean && !_.isBoolean(value), !this.boolean && _.isBoolean(value)]);
+  };
+
+  Option.prototype.toString = function() {
+    var result, signatures;
+    signatures = _.map([this.signature.toString()].concat(this.alias), function(signature) {
+      if (signature.length <= 1) {
+        return "-" + signature;
+      }
+      return "--" + signature;
+    });
+    result = _.str.toSentence(signatures, ', ', ', ');
+    if (this.parameter != null) {
+      result += " <" + this.parameter + ">";
+    }
+    return result;
   };
 
   return Option;
