@@ -426,6 +426,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.7.1
+
+- Fix required options errors being thrown synchronously.
+
 ### 1.7.0
 
 - Add `option#toString()` method as an utility build help pages.
