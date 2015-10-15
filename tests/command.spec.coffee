@@ -270,6 +270,24 @@ describe 'Command:', ->
 				}
 				done()
 
+		it 'should return an error if lacking a required option', (done) ->
+			command = new Command
+				signature: new Signature('foo <bar>')
+				action: _.noop
+				options: [
+					new Option
+						signature: new Signature('quiet')
+						boolean: true
+						required: 'You have to pass this option'
+				]
+
+			command.execute {
+				command: 'foo baz'
+			}, (error) ->
+				expect(error).to.be.an.instanceof(Error)
+				expect(error.message).to.equal('You have to pass this option')
+				done()
+
 		it 'should parse global and command options', (done) ->
 			spy = sinon.spy()
 

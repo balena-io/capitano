@@ -81,7 +81,12 @@ module.exports = Command = (function() {
             error.code = 'EACCES';
             return callback(error);
           }
-          parsedOptions = _this._parseOptions(args.options);
+          try {
+            parsedOptions = _this._parseOptions(args.options);
+          } catch (_error) {
+            error = _error;
+            return typeof callback === "function" ? callback(error) : void 0;
+          }
           return _this.applyPermissions(function(error) {
             if (error != null) {
               return typeof callback === "function" ? callback(error) : void 0;

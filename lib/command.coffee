@@ -60,7 +60,10 @@ module.exports = class Command
 					error.code = 'EACCES'
 					return callback(error)
 
-				parsedOptions = @_parseOptions(args.options)
+				try
+					parsedOptions = @_parseOptions(args.options)
+				catch error
+					return callback?(error)
 
 				@applyPermissions (error) =>
 					return callback?(error) if error?
