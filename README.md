@@ -6,6 +6,8 @@ Capitano
 [![Build Status](https://travis-ci.org/resin-io/capitano.svg?branch=master)](https://travis-ci.org/resin-io/capitano)
 [![Build status](https://ci.appveyor.com/api/projects/status/fatwdf74xeh8j9ee?svg=true)](https://ci.appveyor.com/project/jviotti/capitano)
 
+Join our online chat at [![Gitter chat](https://badges.gitter.im/resin-io/chat.png)](https://gitter.im/resin-io/chat)
+
 Capitano allows you to craft powerful command line applications, your way.
 
 ```coffee
