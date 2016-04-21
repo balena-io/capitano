@@ -42,7 +42,7 @@
     "get-stdin": "^4.0.1",
     "is-elevated": "^1.0.0",
     "lodash": "~3.9.1",
-    "minimist": "~1.1.1",
-    "underscore.string": "~3.0.3"
+    "underscore.string": "~3.0.3",
+    "yargs-parser": "^2.4.0"
   }
 }

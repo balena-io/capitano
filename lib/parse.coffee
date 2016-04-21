@@ -1,6 +1,6 @@
 _ = require('lodash')
 _.str = require('underscore.string')
-minimist = require('minimist')
+yargsParser = require('yargs-parser')
 settings = require('./settings')
 state = require('./state')
 Parameter = require('./parameter')
@@ -18,7 +18,7 @@ exports.normalizeInput = (argv) ->
 
 exports.parse = (argv) ->
 	argv = exports.normalizeInput(argv)
-	output = minimist(argv)
+	output = yargsParser(argv)
 
 	options = _.omit(output, '_')
 
