@@ -1,10 +1,10 @@
-var Parameter, _, minimist, settings, state;
+var Parameter, _, settings, state, yargsParser;
 
 _ = require('lodash');
 
 _.str = require('underscore.string');
 
-minimist = require('minimist');
+yargsParser = require('yargs-parser');
 
 settings = require('./settings');
 
@@ -28,7 +28,7 @@ exports.normalizeInput = function(argv) {
 exports.parse = function(argv) {
   var options, output, result;
   argv = exports.normalizeInput(argv);
-  output = minimist(argv);
+  output = yargsParser(argv);
   options = _.omit(output, '_');
   result = {};
   result.options = options;
