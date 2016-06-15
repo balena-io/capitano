@@ -18,13 +18,19 @@ exports.normalizeInput = (argv) ->
 
 exports.parse = (argv) ->
 	argv = exports.normalizeInput(argv)
-	output = yargsParser(argv)
+	output = yargsParser argv,
+		configuration:
+			'parse-numbers': false
 
 	options = _.omit(output, '_')
 
 	result = {}
 
-	result.options = options
+	result.options = _.mapValues options, (value) ->
+		if /^[\d\.]+$/.test(value)
+			return parseFloat(value)
+		return value
+
 	result.global = exports.parseOptions(state.globalOptions, options)
 
 	if not _.isEmpty(output._)

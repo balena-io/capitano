@@ -28,10 +28,19 @@ exports.normalizeInput = function(argv) {
 exports.parse = function(argv) {
   var options, output, result;
   argv = exports.normalizeInput(argv);
-  output = yargsParser(argv);
+  output = yargsParser(argv, {
+    configuration: {
+      'parse-numbers': false
+    }
+  });
   options = _.omit(output, '_');
   result = {};
-  result.options = options;
+  result.options = _.mapValues(options, function(value) {
+    if (/^[\d\.]+$/.test(value)) {
+      return parseFloat(value);
+    }
+    return value;
+  });
   result.global = exports.parseOptions(state.globalOptions, options);
   if (!_.isEmpty(output._)) {
     output._ = _.map(output._, function(word) {

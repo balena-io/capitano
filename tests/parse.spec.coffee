@@ -179,6 +179,24 @@ describe 'Parse:', ->
 					global: {}
 					options: {}
 
+			it 'should not parse numbers in scientific notation automatically', ->
+				argv = parse.split('hello -x 43e8273')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'hello'
+					global: {}
+					options:
+						x: '43e8273'
+
+			it 'should parse float numbers automatically', ->
+				argv = parse.split('hello -x 1.5')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'hello'
+					global: {}
+					options:
+						x: 1.5
+
 	describe '#split()', ->
 
 		it 'should return an empty array if no signature', ->
