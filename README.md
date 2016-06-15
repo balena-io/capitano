@@ -428,6 +428,14 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.7.3
+
+- Don't evaluate numbers in scientific notation automatically.
+
+### 1.7.2
+
+- Replace `minimist` with `yargs-parser`.
+
 ### 1.7.1
 
 - Fix required options errors being thrown synchronously.
