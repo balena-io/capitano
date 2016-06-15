@@ -72,7 +72,7 @@ module.exports = Command = (function() {
           return typeof callback === "function" ? callback(error) : void 0;
         }
         return _this._checkElevation(function(error, isElevated) {
-          var parsedOptions;
+          var error1, parsedOptions;
           if (error != null) {
             return typeof callback === "function" ? callback(error) : void 0;
           }
@@ -83,18 +83,19 @@ module.exports = Command = (function() {
           }
           try {
             parsedOptions = _this._parseOptions(args.options);
-          } catch (_error) {
-            error = _error;
+          } catch (error1) {
+            error = error1;
             return typeof callback === "function" ? callback(error) : void 0;
           }
           return _this.applyPermissions(function(error) {
+            var error2;
             if (error != null) {
               return typeof callback === "function" ? callback(error) : void 0;
             }
             try {
               _this.action(params, parsedOptions, callback);
-            } catch (_error) {
-              error = _error;
+            } catch (error2) {
+              error = error2;
               return typeof callback === "function" ? callback(error) : void 0;
             }
             if (_this.action.length < 3) {
