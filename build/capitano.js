@@ -54,6 +54,7 @@ exports.permission = function(name, permissionFunction) {
 
 exports.execute = function(args, callback) {
   return exports.state.getMatchCommand(args.command, function(error, command) {
+    var error1;
     if (error != null) {
       return typeof callback === "function" ? callback(error) : void 0;
     }
@@ -62,8 +63,8 @@ exports.execute = function(args, callback) {
     }
     try {
       return command.execute(args, callback);
-    } catch (_error) {
-      error = _error;
+    } catch (error1) {
+      error = error1;
       return typeof callback === "function" ? callback(error) : void 0;
     }
   });
