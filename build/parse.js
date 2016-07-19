@@ -36,7 +36,7 @@ exports.parse = function(argv) {
   options = _.omit(output, '_');
   result = {};
   result.options = _.mapValues(options, function(value) {
-    if (/^[\d\.]+$/.test(value)) {
+    if (/^\d+(\.\d+)?$/.test(value)) {
       return parseFloat(value);
     }
     return value;
