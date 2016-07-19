@@ -27,7 +27,7 @@ exports.parse = (argv) ->
 	result = {}
 
 	result.options = _.mapValues options, (value) ->
-		if /^[\d\.]+$/.test(value)
+		if /^\d+(\.\d+)?$/.test(value)
 			return parseFloat(value)
 		return value
 

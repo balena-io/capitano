@@ -197,6 +197,15 @@ describe 'Parse:', ->
 					options:
 						x: 1.5
 
+			it 'should not parse \'.\' as float number', ->
+				argv = parse.split('hello -x .')
+				result = parse.parse(argv)
+				expect(result).to.deep.equal
+					command: 'hello'
+					global: {}
+					options:
+						x: '.'
+
 	describe '#split()', ->
 
 		it 'should return an empty array if no signature', ->
