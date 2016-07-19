@@ -428,6 +428,10 @@ $ gulp test
 ChangeLog
 ---------
 
+### 1.7.4
+
+- Don't parse a single dot as a float number.
+
 ### 1.7.3
 
 - Don't evaluate numbers in scientific notation automatically.
