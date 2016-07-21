@@ -189,13 +189,14 @@ describe 'Parse:', ->
 						x: '43e8273'
 
 			it 'should parse float numbers automatically', ->
-				argv = parse.split('hello -x 1.5')
+				argv = parse.split('hello -x 1.5 -y .9')
 				result = parse.parse(argv)
 				expect(result).to.deep.equal
 					command: 'hello'
 					global: {}
 					options:
 						x: 1.5
+						y: 0.9
 
 			it 'should not parse \'.\' as float number', ->
 				argv = parse.split('hello -x .')
