@@ -169,7 +169,7 @@ A string representing the issued command, omitting any option.
 
 An object containing the raw representation of the given options.
 
-### globals (object)
+### global (object)
 
 An object containing the matches and parsed global options.
 
