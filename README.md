@@ -49,7 +49,7 @@ $ myCoolApp utils print Error Something very bad happened -d
 Thu Dec 18 2014 14:49:27 GMT-0400 (BOT) Error: Something very bad happened
 ```
 
-We wrote Capitano as we couldn't find any NodeJS command line parser that met our needs. Alternatives such as [commander.js](https://github.com/tj/commander.js), albeit being very good, didn't have good support for features such as infinitely nested git-like subcommands, per-command options and complete customisation. Capitano is our attempt at creating a non opitionated command line parser that can do everything you can imagine.
+We wrote Capitano as we couldn't find any NodeJS command line parser that met our needs. Alternatives such as [commander.js](https://github.com/tj/commander.js), albeit being very good, didn't have good support for features such as infinitely nested git-like subcommands, per-command options and complete customisation. Capitano is our attempt at creating a non-opinionated command line parser that can do everything you can imagine.
 
 Features
 --------
@@ -175,7 +175,7 @@ An object containing the matches and parsed global options.
 
 ## capitano.execute(cli, callback)
 
-It accepts a `cli` object (returned by [capitano.parse()](https://github.com/resin-io/capitano#capitanoparseargv)) and 
+It accepts a `cli` object (returned by [capitano.parse()](https://github.com/resin-io/capitano#capitanoparseargv)) and
 executes the corresponding command, with it's corresponding options.
 
 You're expected to provide your own error handling mechanism here, or in the `capitano.run` if executing from there.
@@ -245,7 +245,7 @@ Classes
 
 The Capitano Command class contains the following public fields:
 
-#### Command#signature (Signature) 
+#### Command#signature (Signature)
 
 See the [Signature class](https://github.com/resin-io/capitano#signature).
 
@@ -285,7 +285,7 @@ A predicate method that returns `true` if the signature has at least one stdin p
 
 The Capitano Option class contains the following public fields:
 
-#### Option#signature 
+#### Option#signature
 
 See [Signature class](https://github.com/resin-io/capitano#signature).
 
@@ -321,7 +321,7 @@ capitano.command
 	action: (params, options, done) ->
 		console.log("The input is: #{params.bar}")
 		done()
-		
+
 capitano.run process.argv, (error) ->
 	throw error if error?
 ```
@@ -356,7 +356,7 @@ capitano.command
 	action: ->
 		console.log("Usage: #{myAppName} [COMMANDS] [OPTIONS]")
 		console.log('\nCommands:\n')
-		
+
 		for command in capitano.state.commands
 			continue if command.isWildcard()
 			console.log("\t#{command.signature}\t\t\t"#{command.description})
@@ -395,16 +395,16 @@ capitano.command
 	description: 'output general help page'
 	action: (params, options, done) ->
 		return outputGeneralHelp() if not params?
-		
+
 		capitano.state.getMatchCommand params.command, (error, command) ->
 			return done(error) if error?
 
 			if not command? or command.isWildcard()
 			return capitano.defaults.actions.commandNotFound(params.command)
-			
+
 			console.log(command.help)
 			done()
-		
+
 capitano.run process.argv, (error) ->
 	throw error if error?
 ```
