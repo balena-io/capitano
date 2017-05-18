@@ -35,6 +35,11 @@ capitano.command
 
 		console.log(log)
 
+capitano.command
+	signature: '*'
+	description: 'Default command that will run when no command is passed'
+	action: someFunction
+
 capitano.run process.argv, (error) ->
 	throw error if error?
 ```
