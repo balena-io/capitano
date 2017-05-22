@@ -1,0 +1,11 @@
+{
+  "name": "capitano",
+  "version": "2.0.0",
+  "description": "Powerful, non opitionated command line parser for complex applications",
+  "main": "lib/capitano.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Juan Cruz Viotti <jviotti@openmailbox.org>",
+  "license": "Apache-2.0"
+}
