@@ -229,3 +229,33 @@ ava.test('getArgumentName: should return the same string if given a word', (test
     mode: MODES.UNIX
   }), 'hello');
 });
+
+ava.test('getArgumentType: should return OPTION given a UNIX short option and mode if UNIX', (test) => {
+  test.is(tokenizer.getArgumentType('-x', {
+    mode: MODES.UNIX
+  }), tokenizer.TYPES.OPTION);
+});
+
+ava.test('getArgumentType: should return OPTION given a UNIX long option and mode if UNIX', (test) => {
+  test.is(tokenizer.getArgumentType('--foo', {
+    mode: MODES.UNIX
+  }), tokenizer.TYPES.OPTION);
+});
+
+ava.test('getArgumentType: should return WORD given a Windows short option and mode if UNIX', (test) => {
+  test.is(tokenizer.getArgumentType('/x', {
+    mode: MODES.UNIX
+  }), tokenizer.TYPES.WORD);
+});
+
+ava.test('getArgumentType: should return WORD given a Windows long option and mode if UNIX', (test) => {
+  test.is(tokenizer.getArgumentType('/foo', {
+    mode: MODES.UNIX
+  }), tokenizer.TYPES.WORD);
+});
+
+ava.test('getArgumentType: should return WORD given a word and mode if UNIX', (test) => {
+  test.is(tokenizer.getArgumentType('foo', {
+    mode: MODES.UNIX
+  }), tokenizer.TYPES.WORD);
+});
