@@ -35,3 +35,9 @@ ava.test('every property should contain an optionLong regex', (test) => {
     test.true(_.isRegExp(value.optionLong));
   });
 });
+
+ava.test('every property should contain an endOfParameterSymbol string', (test) => {
+  _.each(MODES, (value) => {
+    test.true(_.isString(value.endOfParameterSymbol));
+  });
+});

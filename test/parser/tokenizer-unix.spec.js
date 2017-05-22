@@ -323,3 +323,30 @@ ava.test('tokenize: should tokenize Windows options as WORDs', (test) => {
     }
   ]);
 });
+
+ava.test('should interpret everything as WORD if -- is encountered', (test) => {
+  test.deepEqual(tokenizer.tokenize([ 'flash', '-c', '--', '--drive', '/dev/disk2', '-y' ], {
+    mode: MODES.UNIX
+  }), [
+    {
+      type: tokenizer.TYPES.WORD,
+      name: 'flash'
+    },
+    {
+      type: tokenizer.TYPES.OPTION,
+      name: 'c'
+    },
+    {
+      type: tokenizer.TYPES.WORD,
+      name: '--drive'
+    },
+    {
+      type: tokenizer.TYPES.WORD,
+      name: '/dev/disk2'
+    },
+    {
+      type: tokenizer.TYPES.WORD,
+      name: '-y'
+    }
+  ]);
+});
