@@ -117,7 +117,7 @@ ava.test('isOption: should return false if mode is UNIX and argument is a hyphen
 });
 
 ava.test('isOption: should return false if mode is UNIX and argument is two hyphens', (test) => {
-  test.false(tokenizer.isOption('-', {
+  test.false(tokenizer.isOption('--', {
     mode: MODES.UNIX
   }));
 });
@@ -258,6 +258,12 @@ ava.test('getArgumentType: should return WORD given a word and mode if UNIX', (t
   test.is(tokenizer.getArgumentType('foo', {
     mode: MODES.UNIX
   }), tokenizer.TYPES.WORD);
+});
+
+ava.test('getArgumentType: should return EOP given --', (test) => {
+  test.is(tokenizer.getArgumentType('--', {
+    mode: MODES.UNIX
+  }), tokenizer.TYPES.EOP);
 });
 
 ava.test('tokenize: should tokenize a single boolean UNIX short option', (test) => {
