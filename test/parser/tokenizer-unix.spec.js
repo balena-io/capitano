@@ -259,3 +259,67 @@ ava.test('getArgumentType: should return WORD given a word and mode if UNIX', (t
     mode: MODES.UNIX
   }), tokenizer.TYPES.WORD);
 });
+
+ava.test('tokenize: should tokenize a single boolean UNIX short option', (test) => {
+  test.deepEqual(tokenizer.tokenize([ '-x' ], {
+    mode: MODES.UNIX
+  }), [
+    {
+      type: tokenizer.TYPES.OPTION,
+      name: 'x'
+    }
+  ]);
+});
+
+ava.test('tokenize: should tokenize a single boolean UNIX long option', (test) => {
+  test.deepEqual(tokenizer.tokenize([ '--foo' ], {
+    mode: MODES.UNIX
+  }), [
+    {
+      type: tokenizer.TYPES.OPTION,
+      name: 'foo'
+    }
+  ]);
+});
+
+ava.test('tokenize: should tokenize a complex set of UNIX arguments', (test) => {
+  test.deepEqual(tokenizer.tokenize([ 'flash', '-c', '--drive', '/dev/disk2', '-y' ], {
+    mode: MODES.UNIX
+  }), [
+    {
+      type: tokenizer.TYPES.WORD,
+      name: 'flash'
+    },
+    {
+      type: tokenizer.TYPES.OPTION,
+      name: 'c'
+    },
+    {
+      type: tokenizer.TYPES.OPTION,
+      name: 'drive'
+    },
+    {
+      type: tokenizer.TYPES.WORD,
+      name: '/dev/disk2'
+    },
+    {
+      type: tokenizer.TYPES.OPTION,
+      name: 'y'
+    }
+  ]);
+});
+
+ava.test('tokenize: should tokenize Windows options as WORDs', (test) => {
+  test.deepEqual(tokenizer.tokenize([ '/x', '/foo' ], {
+    mode: MODES.UNIX
+  }), [
+    {
+      type: tokenizer.TYPES.WORD,
+      name: '/x'
+    },
+    {
+      type: tokenizer.TYPES.WORD,
+      name: '/foo'
+    }
+  ]);
+});
