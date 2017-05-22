@@ -11,6 +11,8 @@ rules:
     - off
   no-magic-numbers:
     - off
+  max-len:
+    - off
   id-length:
     - error
     - min: 2

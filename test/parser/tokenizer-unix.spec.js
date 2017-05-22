@@ -20,104 +20,212 @@ const ava = require('ava');
 const tokenizer = require('../../lib/parser/tokenizer');
 const MODES = require('../../lib/parser/modes');
 
-ava.test('should return false if mode is UNIX and argument is an empty string', (test) => {
+ava.test('isShortOption: should return true if mode is UNIX and argument is a UNIX short option', (test) => {
+  test.true(tokenizer.isShortOption('-x', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isShortOption: should return false if mode is UNIX and argument is a UNIX long option', (test) => {
+  test.false(tokenizer.isShortOption('--hello', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isShortOption: should return false if mode is UNIX and argument is a Windows short option', (test) => {
+  test.false(tokenizer.isShortOption('/x', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isShortOption: should return false if mode is UNIX and argument is a Windows long option', (test) => {
+  test.false(tokenizer.isShortOption('/hello', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isOption: should return false if mode is UNIX and argument is an empty string', (test) => {
   test.false(tokenizer.isOption('', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return false if mode is UNIX and argument is a blank string', (test) => {
+ava.test('isLongOption: should return false if mode is UNIX and argument is a UNIX short option', (test) => {
+  test.false(tokenizer.isLongOption('-x', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isLongOption: should return true if mode is UNIX and argument is a UNIX long option', (test) => {
+  test.true(tokenizer.isLongOption('--hello', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isLongOption: should return false if mode is UNIX and argument is a Windows short option', (test) => {
+  test.false(tokenizer.isLongOption('/x', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isLongOption: should return false if mode is UNIX and argument is a Windows long option', (test) => {
+  test.false(tokenizer.isLongOption('/hello', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isOption: should return false if mode is UNIX and argument is an empty string', (test) => {
+  test.false(tokenizer.isOption('', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isOption: should return false if mode is UNIX and argument is a blank string', (test) => {
   test.false(tokenizer.isOption('   ', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return false if mode is UNIX and argument is undefined', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is undefined', (test) => {
   test.false(tokenizer.isOption(undefined, {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return false if mode is UNIX and argument is null', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is null', (test) => {
   test.false(tokenizer.isOption(null, {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return false if mode is UNIX and argument is a number', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is a number', (test) => {
   test.false(tokenizer.isOption(99, {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a lowercase Windows short option', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is a lowercase Windows short option', (test) => {
   test.false(tokenizer.isOption('/x', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a hyphen', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is a hyphen', (test) => {
   test.false(tokenizer.isOption('-', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is two hyphens', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is two hyphens', (test) => {
   test.false(tokenizer.isOption('-', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return false if mode is UNIX and argument is a long option with one hyphen', (test) => {
+ava.test('isOption: should return false if mode is UNIX and argument is a long option with one hyphen', (test) => {
   test.false(tokenizer.isOption('-foo', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is an uppercase Windows short option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is an uppercase Windows short option', (test) => {
   test.false(tokenizer.isOption('/A', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a number Windows short option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is a number Windows short option', (test) => {
   test.false(tokenizer.isOption('/9', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a lowercase short option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is a lowercase UNIX short option', (test) => {
   test.true(tokenizer.isOption('-x', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is an uppercase short option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is an uppercase UNIX short option', (test) => {
   test.true(tokenizer.isOption('-A', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a number short option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is a number UNIX short option', (test) => {
   test.true(tokenizer.isOption('-9', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a lowercase long option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is a lowercase UNIX long option', (test) => {
   test.true(tokenizer.isOption('--foo', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is an uppercase long option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is an uppercase UNIX long option', (test) => {
   test.true(tokenizer.isOption('--HEY', {
     mode: MODES.UNIX
   }));
 });
 
-ava.test('should return true if mode is UNIX and argument is a number long option', (test) => {
+ava.test('isOption: should return true if mode is UNIX and argument is a number UNIX long option', (test) => {
   test.true(tokenizer.isOption('--945', {
     mode: MODES.UNIX
   }));
+});
+
+ava.test('isOption: should return true if mode is UNIX and argument is a string UNIX long option containing hyphens', (test) => {
+  test.true(tokenizer.isOption('--foo-bar-baz', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('isOption: should return false if mode is UNIX and argument is a string UNIX long option starting with three hyphens', (test) => {
+  test.false(tokenizer.isOption('---foo-bar-baz', {
+    mode: MODES.UNIX
+  }));
+});
+
+ava.test('getArgumentName: should return the name of a string UNIX short option if mode is UNIX', (test) => {
+  test.is(tokenizer.getArgumentName('-x', {
+    mode: MODES.UNIX
+  }), 'x');
+});
+
+ava.test('getArgumentName: should return the name of a number UNIX short option if mode is UNIX', (test) => {
+  test.is(tokenizer.getArgumentName('-0', {
+    mode: MODES.UNIX
+  }), '0');
+});
+
+ava.test('getArgumentName: should return the name of a string UNIX long option if mode is UNIX', (test) => {
+  test.is(tokenizer.getArgumentName('--foo', {
+    mode: MODES.UNIX
+  }), 'foo');
+});
+
+ava.test('getArgumentName: should return the name of a number UNIX long option if mode is UNIX', (test) => {
+  test.is(tokenizer.getArgumentName('--1452', {
+    mode: MODES.UNIX
+  }), '1452');
+});
+
+ava.test('getArgumentName: should return the same string given a Windows short option if mode is UNIX', (test) => {
+  test.is(tokenizer.getArgumentName('/x', {
+    mode: MODES.UNIX
+  }), '/x');
+});
+
+ava.test('getArgumentName: should return the same string given a Windows long option if mode is UNIX', (test) => {
+  test.is(tokenizer.getArgumentName('/foo', {
+    mode: MODES.UNIX
+  }), '/foo');
+});
+
+ava.test('getArgumentName: should return the same string if given a word', (test) => {
+  test.is(tokenizer.getArgumentName('hello', {
+    mode: MODES.UNIX
+  }), 'hello');
 });
