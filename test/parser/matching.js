@@ -30,8 +30,8 @@ const MODES = require('../../lib/parser/modes');
 // for (var x of generatorics.baseN([ false, true ], 3)) console.log(x)
 //
 
-ava.test('getValidPermutations: should permutate an ambiguous command with a leading option', (test) => {
-  test.deepEqual(matching.getValidPermutations(tokenizer.tokenize([
+ava.test('getValidCombinations: should combinate an ambiguous command with a leading option', (test) => {
+  test.deepEqual(matching.getValidCombinations(tokenizer.tokenize([
     '-v',
     'foo',
     'bar'
