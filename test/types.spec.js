@@ -47,3 +47,43 @@ ava.test('isSupported: should return true if type is boolean', (test) => {
 ava.test('isSupported: should return false if type is not supported', (test) => {
   test.false(types.isSupported('hello'));
 });
+
+ava.test('matches: should return true if type is string and value is string', (test) => {
+  test.true(types.matches(types.supported.STRING, 'foo'));
+});
+
+ava.test('matches: should return false if type is string and value is number', (test) => {
+  test.false(types.matches(types.supported.STRING, 1));
+});
+
+ava.test('matches: should return false if type is string and value is boolean', (test) => {
+  test.false(types.matches(types.supported.STRING, false));
+});
+
+ava.test('matches: should return false if type is number and value is string', (test) => {
+  test.false(types.matches(types.supported.NUMBER, 'foo'));
+});
+
+ava.test('matches: should return true if type is number and value is number', (test) => {
+  test.true(types.matches(types.supported.NUMBER, 1));
+});
+
+ava.test('matches: should return false if type is number and value is boolean', (test) => {
+  test.false(types.matches(types.supported.NUMBER, false));
+});
+
+ava.test('matches: should return false if type is boolean and value is string', (test) => {
+  test.false(types.matches(types.supported.BOOLEAN, 'foo'));
+});
+
+ava.test('matches: should return false if type is boolean and value is number', (test) => {
+  test.false(types.matches(types.supported.BOOLEAN, 1));
+});
+
+ava.test('matches: should return false if type is boolean and value is boolean', (test) => {
+  test.true(types.matches(types.supported.BOOLEAN, false));
+});
+
+ava.test('matches: should return false if type is unknown', (test) => {
+  test.false(types.matches('foo', 'bar'));
+});
