@@ -80,3 +80,51 @@ ava.test('getPreviousToken: should return null if there is not a previous token'
 
   test.is(tokenizer.getPreviousToken(tokens, 0), null);
 });
+
+ava.test('isOption: should return true if token is a short option', (test) => {
+  const token = _.first(tokenizer.tokenize([ '-f' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.true(tokenizer.isOption(token));
+});
+
+ava.test('isOption: should return true if token is a long option', (test) => {
+  const token = _.first(tokenizer.tokenize([ '--foo' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.true(tokenizer.isOption(token));
+});
+
+ava.test('isOption: should return false if token is a word', (test) => {
+  const token = _.first(tokenizer.tokenize([ 'foo' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.false(tokenizer.isOption(token));
+});
+
+ava.test('isWord: should return false if token is a short option', (test) => {
+  const token = _.first(tokenizer.tokenize([ '-f' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.false(tokenizer.isWord(token));
+});
+
+ava.test('isWord: should return false if token is a long option', (test) => {
+  const token = _.first(tokenizer.tokenize([ '--foo' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.false(tokenizer.isWord(token));
+});
+
+ava.test('isWord: should return true if token is a word', (test) => {
+  const token = _.first(tokenizer.tokenize([ 'foo' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.true(tokenizer.isWord(token));
+});
