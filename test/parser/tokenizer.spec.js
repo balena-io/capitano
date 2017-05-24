@@ -19,6 +19,7 @@
 const ava = require('ava');
 const _ = require('lodash');
 const tokenizer = require('../../lib/parser/tokenizer');
+const MODES = require('../../lib/parser/modes');
 
 ava.test('TYPES: should be a plain object', (test) => {
   test.true(_.isPlainObject(tokenizer.TYPES));
@@ -30,4 +31,52 @@ ava.test('TYPES: should contain string values', (test) => {
 
 ava.test('TYPES: should contain unique values', (test) => {
   test.not(_.size(_.uniq(_.values(tokenizer.TYPES))), 1);
+});
+
+ava.test('getNextToken: should get the next token in an ordered set of tokens', (test) => {
+  const tokens = tokenizer.tokenize([ 'foo', 'bar', 'baz' ], {
+    mode: MODES.UNIX
+  });
+
+  test.is(tokenizer.getNextToken(tokens, 1).name, 'baz');
+});
+
+ava.test('getNextToken: should get the next token in an unordered set of tokens', (test) => {
+  const tokens = _.shuffle(tokenizer.tokenize([ 'foo', 'bar', 'baz' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.is(tokenizer.getNextToken(tokens, 1).name, 'baz');
+});
+
+ava.test('getNextToken: should return null if there is not a next token', (test) => {
+  const tokens = tokenizer.tokenize([ 'foo', 'bar', 'baz' ], {
+    mode: MODES.UNIX
+  });
+
+  test.is(tokenizer.getNextToken(tokens, 3), null);
+});
+
+ava.test('getPreviousToken: should get the previous token in an ordered set of tokens', (test) => {
+  const tokens = tokenizer.tokenize([ 'foo', 'bar', 'baz' ], {
+    mode: MODES.UNIX
+  });
+
+  test.is(tokenizer.getPreviousToken(tokens, 1).name, 'foo');
+});
+
+ava.test('getPreviousToken: should get the previous token in an unordered set of tokens', (test) => {
+  const tokens = _.shuffle(tokenizer.tokenize([ 'foo', 'bar', 'baz' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.is(tokenizer.getPreviousToken(tokens, 1).name, 'foo');
+});
+
+ava.test('getPreviousToken: should return null if there is not a previous token', (test) => {
+  const tokens = tokenizer.tokenize([ 'foo', 'bar', 'baz' ], {
+    mode: MODES.UNIX
+  });
+
+  test.is(tokenizer.getPreviousToken(tokens, 0), null);
 });
