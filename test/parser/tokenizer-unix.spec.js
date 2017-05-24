@@ -271,6 +271,7 @@ ava.test('tokenize: should tokenize a single boolean UNIX short option', (test) 
     mode: MODES.UNIX
   }), [
     {
+      index: 0,
       type: tokenizer.TYPES.OPTION,
       name: 'x'
     }
@@ -282,6 +283,7 @@ ava.test('tokenize: should tokenize a single boolean UNIX long option', (test) =
     mode: MODES.UNIX
   }), [
     {
+      index: 0,
       type: tokenizer.TYPES.OPTION,
       name: 'foo'
     }
@@ -293,22 +295,27 @@ ava.test('tokenize: should tokenize a complex set of UNIX arguments', (test) => 
     mode: MODES.UNIX
   }), [
     {
+      index: 0,
       type: tokenizer.TYPES.WORD,
       name: 'flash'
     },
     {
+      index: 1,
       type: tokenizer.TYPES.OPTION,
       name: 'c'
     },
     {
+      index: 2,
       type: tokenizer.TYPES.OPTION,
       name: 'drive'
     },
     {
+      index: 3,
       type: tokenizer.TYPES.WORD,
       name: '/dev/disk2'
     },
     {
+      index: 4,
       type: tokenizer.TYPES.OPTION,
       name: 'y'
     }
@@ -320,10 +327,12 @@ ava.test('tokenize: should tokenize Windows options as WORDs', (test) => {
     mode: MODES.UNIX
   }), [
     {
+      index: 0,
       type: tokenizer.TYPES.WORD,
       name: '/x'
     },
     {
+      index: 1,
       type: tokenizer.TYPES.WORD,
       name: '/foo'
     }
@@ -335,22 +344,27 @@ ava.test('should interpret everything as WORD if -- is encountered', (test) => {
     mode: MODES.UNIX
   }), [
     {
+      index: 0,
       type: tokenizer.TYPES.WORD,
       name: 'flash'
     },
     {
+      index: 1,
       type: tokenizer.TYPES.OPTION,
       name: 'c'
     },
     {
+      index: 2,
       type: tokenizer.TYPES.WORD,
       name: '--drive'
     },
     {
+      index: 3,
       type: tokenizer.TYPES.WORD,
       name: '/dev/disk2'
     },
     {
+      index: 4,
       type: tokenizer.TYPES.WORD,
       name: '-y'
     }
