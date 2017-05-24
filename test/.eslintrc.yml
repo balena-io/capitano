@@ -17,3 +17,5 @@ rules:
     - off
   object-curly-newline:
     - off
+  no-new:
+    - off
