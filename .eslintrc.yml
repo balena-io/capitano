@@ -437,8 +437,7 @@ rules:
   no-whitespace-before-property:
     - error
   object-curly-newline:
-    - error
-    - minProperties: 1
+    - off
   object-curly-spacing:
     - error
     - always

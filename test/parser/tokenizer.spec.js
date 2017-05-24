@@ -128,3 +128,27 @@ ava.test('isWord: should return true if token is a word', (test) => {
 
   test.true(tokenizer.isWord(token));
 });
+
+ava.test('getName: should return the name of a word', (test) => {
+  const token = _.first(tokenizer.tokenize([ 'foo' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.is(tokenizer.getName(token), 'foo');
+});
+
+ava.test('getName: should return the name of a short option', (test) => {
+  const token = _.first(tokenizer.tokenize([ '-x' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.is(tokenizer.getName(token), 'x');
+});
+
+ava.test('getName: should return the name of a long option', (test) => {
+  const token = _.first(tokenizer.tokenize([ '--foo' ], {
+    mode: MODES.UNIX
+  }));
+
+  test.is(tokenizer.getName(token), 'foo');
+});

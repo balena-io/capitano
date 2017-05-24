@@ -5,7 +5,7 @@
   "main": "lib/capitano.js",
   "scripts": {
     "lint": "eslint lib test",
-    "test": "npm run lint && nyc --reporter=lcov ava --verbose"
+    "test": "npm run lint && nyc --reporter=lcov ava"
   },
   "author": "Juan Cruz Viotti <jviotti@openmailbox.org>",
   "license": "Apache-2.0",

@@ -14,8 +14,6 @@ rules:
   max-len:
     - off
   id-length:
-    - error
-    - min: 2
-      exceptions:
-        - "_"
-        - "m"
+    - off
+  object-curly-newline:
+    - off
