@@ -17,6 +17,7 @@
 'use strict';
 
 const ava = require('ava');
+const _ = require('lodash');
 const Parameter = require('../lib/parameter');
 
 ava.test('constructor: should throw if options is empty', (test) => {
@@ -273,4 +274,877 @@ ava.test('toString: should stringify an optional, variadic option', (test) => {
   });
 
   test.is(parameter.toString(), '[foo...]');
+});
+
+_.each([
+
+  // String type
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 1 ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'foo', 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 1 ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'foo', 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 1 ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'foo', 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 1 ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'foo', 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  // Number type
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'foo', 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 1, 2 ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 1, 2 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 1, 2 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  // String, number type
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'foo', 'bar' ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: false
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 1, 2 ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: false
+    },
+    value: [ 'foo', 1 ],
+    expected: false
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 1, 2 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: false,
+      variadic: true
+    },
+    value: [ 'foo', 1 ],
+    expected: true
+  },
+
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'bar' ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 1 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ true ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ false ],
+    expected: false
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 1, 2 ],
+    expected: true
+  },
+  {
+    parameter: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      optional: true,
+      variadic: true
+    },
+    value: [ 'foo', 1 ],
+    expected: true
+  }
+
+], (testCase) => {
+  const parameter = new Parameter(testCase.parameter);
+
+  ava.test(_.join([
+    `matches: should return ${testCase.expected} if`,
+    `variadic=${parameter.variadic},`,
+    `optional=${parameter.optional},`,
+    `value=${testCase.value}`
+  ], ' '), (test) => {
+    test.is(parameter.matches(testCase.value), testCase.expected);
+  });
 });
