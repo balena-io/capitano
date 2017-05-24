@@ -18,16 +18,32 @@
 
 const ava = require('ava');
 const _ = require('lodash');
-const TYPES = require('../lib/types');
+const types = require('../lib/types');
 
-ava.test('should be a plain object', (test) => {
-  test.true(_.isPlainObject(TYPES));
+ava.test('supported: should be a plain object', (test) => {
+  test.true(_.isPlainObject(types.supported));
 });
 
-ava.test('every property should contain a string', (test) => {
-  test.true(_.every(_.values(TYPES), _.isString));
+ava.test('supported: every property should contain a string', (test) => {
+  test.true(_.every(_.values(types.supported), _.isString));
 });
 
-ava.test('every property should be unique', (test) => {
-  test.is(_.size(_.uniq(_.values(TYPES))), _.size(_.values(TYPES)));
+ava.test('supported: every property should be unique', (test) => {
+  test.is(_.size(_.uniq(_.values(types.supported))), _.size(_.values(types.supported)));
+});
+
+ava.test('isSupported: should return true if type is string', (test) => {
+  test.true(types.isSupported(types.supported.STRING));
+});
+
+ava.test('isSupported: should return true if type is number', (test) => {
+  test.true(types.isSupported(types.supported.NUMBER));
+});
+
+ava.test('isSupported: should return true if type is boolean', (test) => {
+  test.true(types.isSupported(types.supported.BOOLEAN));
+});
+
+ava.test('isSupported: should return false if type is not supported', (test) => {
+  test.false(types.isSupported('hello'));
 });
