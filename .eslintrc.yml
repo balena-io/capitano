@@ -382,7 +382,7 @@ rules:
     - error
     - max: 1
   multiline-ternary:
-    - error
+    - off
     - never
   new-cap:
     - error
