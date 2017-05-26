@@ -1236,3 +1236,47 @@ ava.test('isRequired: should return true if optional=false, variadic=true', (tes
 
   test.true(Parameter.isRequired(parameter));
 });
+
+ava.test('isVariadic: should return false if optional=true, variadic=false', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: true,
+    variadic: false
+  });
+
+  test.false(Parameter.isVariadic(parameter));
+});
+
+ava.test('isVariadic: should return true if optional=true, variadic=true', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: true,
+    variadic: true
+  });
+
+  test.true(Parameter.isVariadic(parameter));
+});
+
+ava.test('isVariadic: should return false if optional=false, variadic=false', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false,
+    variadic: false
+  });
+
+  test.false(Parameter.isVariadic(parameter));
+});
+
+ava.test('isVariadic: should return true if optional=false, variadic=true', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false,
+    variadic: true
+  });
+
+  test.true(Parameter.isVariadic(parameter));
+});
