@@ -1145,7 +1145,7 @@ _.each([
     `optional=${parameter.optional},`,
     `value=${testCase.value}`
   ], ' '), (test) => {
-    test.is(parameter.matches(testCase.value), testCase.expected);
+    test.is(Parameter.matches(parameter, testCase.value), testCase.expected);
   });
 });
 
