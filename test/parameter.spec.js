@@ -1148,3 +1148,91 @@ _.each([
     test.is(parameter.matches(testCase.value), testCase.expected);
   });
 });
+
+ava.test('isOptional: should return true if optional=true, variadic=false', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: true,
+    variadic: false
+  });
+
+  test.true(Parameter.isOptional(parameter));
+});
+
+ava.test('isOptional: should return true if optional=true, variadic=true', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: true,
+    variadic: true
+  });
+
+  test.true(Parameter.isOptional(parameter));
+});
+
+ava.test('isOptional: should return false if optional=false, variadic=false', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false,
+    variadic: false
+  });
+
+  test.false(Parameter.isOptional(parameter));
+});
+
+ava.test('isOptional: should return false if optional=false, variadic=true', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false,
+    variadic: true
+  });
+
+  test.false(Parameter.isOptional(parameter));
+});
+
+ava.test('isRequired: should return false if optional=true, variadic=false', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: true,
+    variadic: false
+  });
+
+  test.false(Parameter.isRequired(parameter));
+});
+
+ava.test('isRequired: should return false if optional=true, variadic=true', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: true,
+    variadic: true
+  });
+
+  test.false(Parameter.isRequired(parameter));
+});
+
+ava.test('isRequired: should return true if optional=false, variadic=false', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false,
+    variadic: false
+  });
+
+  test.true(Parameter.isRequired(parameter));
+});
+
+ava.test('isRequired: should return true if optional=false, variadic=true', (test) => {
+  const parameter = new Parameter({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false,
+    variadic: true
+  });
+
+  test.true(Parameter.isRequired(parameter));
+});
