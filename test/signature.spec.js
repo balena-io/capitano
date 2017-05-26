@@ -231,6 +231,26 @@ ava.test('constructor: should throw if there is a required parameter after a req
   }, 'Invalid signature parameters: parameter after a variadic parameter');
 });
 
+ava.test('constructor: should throw if there are two parameters with the same name', (test) => {
+  test.throws(() => {
+    new Signature({
+      command: [ 'foo' ],
+      parameters: [
+        new Parameter({
+          name: 'foo',
+          type: [ 'string' ],
+          optional: false
+        }),
+        new Parameter({
+          name: 'foo',
+          type: [ 'number' ],
+          optional: true
+        })
+      ]
+    });
+  }, 'Invalid signature parameters: duplicated parameters');
+});
+
 ava.test('match: should match no arguments with a signature with an optional parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
