@@ -243,7 +243,9 @@ ava.test('match: should match no arguments with a signature with an optional par
     ]
   });
 
-  test.deepEqual(Signature.match(signature, [ 'foo' ]), {});
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {
+    bar: undefined
+  });
 });
 
 ava.test('match: should match one string argument against a command with one string required parameter', (test) => {
@@ -342,7 +344,11 @@ ava.test('match: should match no arguments against a command with three string o
     ]
   });
 
-  test.deepEqual(Signature.match(signature, [ 'foo' ]), {});
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {
+    bar: undefined,
+    baz: undefined,
+    qux: undefined
+  });
 });
 
 ava.test('match: should match one string argument against a command with three string optional parameters', (test) => {
@@ -368,7 +374,9 @@ ava.test('match: should match one string argument against a command with three s
   });
 
   test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), {
-    bar: 'bar'
+    bar: 'bar',
+    baz: undefined,
+    qux: undefined
   });
 });
 
@@ -396,7 +404,8 @@ ava.test('match: should match two string arguments against a command with three 
 
   test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz' ]), {
     bar: 'bar',
-    baz: 'baz'
+    baz: 'baz',
+    qux: undefined
   });
 });
 
@@ -711,6 +720,7 @@ ava.test('match: should match no arguments to a command with one optional string
   });
 
   test.deepEqual(Signature.match(signature, [ 'foo' ]), {
+    bar: undefined,
     baz: []
   });
 });
