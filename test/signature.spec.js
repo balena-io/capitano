@@ -231,7 +231,7 @@ ava.test('constructor: should throw if there is a required parameter after a req
   }, 'Invalid signature parameters: parameter after a variadic parameter');
 });
 
-ava.test('matches: should match no arguments with a signature with an optional parameter', (test) => {
+ava.test('match: should match no arguments with a signature with an optional parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -243,10 +243,10 @@ ava.test('matches: should match no arguments with a signature with an optional p
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {});
 });
 
-ava.test('matches: should match one string argument against a command with one string required parameter', (test) => {
+ava.test('match: should match one string argument against a command with one string required parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -258,10 +258,12 @@ ava.test('matches: should match one string argument against a command with one s
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'baz' ]), {
+    bar: 'baz'
+  });
 });
 
-ava.test('matches: should match one string argument against a command with one string optional parameter', (test) => {
+ava.test('match: should match one string argument against a command with one string optional parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -273,10 +275,12 @@ ava.test('matches: should match one string argument against a command with one s
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'baz' ]), {
+    bar: 'baz'
+  });
 });
 
-ava.test('matches: should match two string arguments against a command with one string optional parameter', (test) => {
+ava.test('match: should match two string arguments against a command with one string optional parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -288,10 +292,10 @@ ava.test('matches: should match two string arguments against a command with one 
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo', 'bar', 'baz' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz' ]), null);
 });
 
-ava.test('matches: should match two string arguments against a command with three string required parameters', (test) => {
+ava.test('match: should match two string arguments against a command with three string required parameters', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -313,10 +317,10 @@ ava.test('matches: should match two string arguments against a command with thre
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo', 'bar', 'baz' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz' ]), null);
 });
 
-ava.test('matches: should match no arguments against a command with three string optional parameters', (test) => {
+ava.test('match: should match no arguments against a command with three string optional parameters', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -338,10 +342,10 @@ ava.test('matches: should match no arguments against a command with three string
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {});
 });
 
-ava.test('matches: should match one string argument against a command with three string optional parameters', (test) => {
+ava.test('match: should match one string argument against a command with three string optional parameters', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -363,10 +367,12 @@ ava.test('matches: should match one string argument against a command with three
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), {
+    bar: 'bar'
+  });
 });
 
-ava.test('matches: should match two string arguments against a command with three string optional parameters', (test) => {
+ava.test('match: should match two string arguments against a command with three string optional parameters', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -388,10 +394,13 @@ ava.test('matches: should match two string arguments against a command with thre
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar', 'baz' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz' ]), {
+    bar: 'bar',
+    baz: 'baz'
+  });
 });
 
-ava.test('matches: should match three string arguments against a command with three string optional parameters', (test) => {
+ava.test('match: should match three string arguments against a command with three string optional parameters', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -413,10 +422,14 @@ ava.test('matches: should match three string arguments against a command with th
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar', 'baz', 'qux' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz', 'qux' ]), {
+    bar: 'bar',
+    baz: 'baz',
+    qux: 'qux'
+  });
 });
 
-ava.test('matches: should match one number argument against a command with one string required parameter', (test) => {
+ava.test('match: should match one number argument against a command with one string required parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -428,10 +441,10 @@ ava.test('matches: should match one number argument against a command with one s
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo', 1 ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 1 ]), null);
 });
 
-ava.test('matches: should match one number argument against a command with one string optional parameter', (test) => {
+ava.test('match: should match one number argument against a command with one string optional parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -443,10 +456,10 @@ ava.test('matches: should match one number argument against a command with one s
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo', 1 ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 1 ]), null);
 });
 
-ava.test('matches: should match one string argument against a command with one string required variadic parameter', (test) => {
+ava.test('match: should match one string argument against a command with one string required variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -459,10 +472,12 @@ ava.test('matches: should match one string argument against a command with one s
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), {
+    bar: [ 'bar' ]
+  });
 });
 
-ava.test('matches: should match three string arguments against a command with one string required variadic parameter', (test) => {
+ava.test('match: should match three string arguments against a command with one string required variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -475,10 +490,12 @@ ava.test('matches: should match three string arguments against a command with on
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar', 'baz', 'qux' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz', 'qux' ]), {
+    bar: [ 'bar', 'baz', 'qux' ]
+  });
 });
 
-ava.test('matches: should match three number and string arguments against a command with one string and number required variadic parameter', (test) => {
+ava.test('match: should match three number and string arguments against a command with one string and number required variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -491,10 +508,12 @@ ava.test('matches: should match three number and string arguments against a comm
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar', 5, 8 ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 5, 8 ]), {
+    bar: [ 'bar', 5, 8 ]
+  });
 });
 
-ava.test('matches: should match no arguments against a command with one string required variadic parameter', (test) => {
+ava.test('match: should match no arguments against a command with one string required variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -507,10 +526,10 @@ ava.test('matches: should match no arguments against a command with one string r
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), null);
 });
 
-ava.test('matches: should match no arguments against a command with one string optional variadic parameter', (test) => {
+ava.test('match: should match no arguments against a command with one string optional variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -523,32 +542,12 @@ ava.test('matches: should match no arguments against a command with one string o
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo' ]));
-});
-
-ava.test('matches: should match five valid arguments against a command with one required string parameter and one required number variadic parameter', (test) => {
-  const signature = new Signature({
-    command: [ 'foo' ],
-    parameters: [
-      new Parameter({
-        name: 'bar',
-        type: [ 'string' ],
-        optional: false,
-        variadic: false
-      }),
-      new Parameter({
-        name: 'baz',
-        type: [ 'number' ],
-        optional: false,
-        variadic: true
-      })
-    ]
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {
+    bar: []
   });
-
-  test.true(Signature.matches(signature, [ 'foo', 'bar', 1, 2, 3, 4 ]));
 });
 
-ava.test('matches: should match five invalid arguments against a command with one required string parameter and one required number variadic parameter', (test) => {
+ava.test('match: should match five valid arguments against a command with one required string parameter and one required number variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -567,10 +566,35 @@ ava.test('matches: should match five invalid arguments against a command with on
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo', 'bar', 1, 2, 3, 'baz' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 1, 2, 3, 4 ]), {
+    bar: 'bar',
+    baz: [ 1, 2, 3, 4 ]
+  });
 });
 
-ava.test('matches: should match one string argument against a command with one required string parameter and one optional number variadic parameter', (test) => {
+ava.test('match: should match five invalid arguments against a command with one required string parameter and one required number variadic parameter', (test) => {
+  const signature = new Signature({
+    command: [ 'foo' ],
+    parameters: [
+      new Parameter({
+        name: 'bar',
+        type: [ 'string' ],
+        optional: false,
+        variadic: false
+      }),
+      new Parameter({
+        name: 'baz',
+        type: [ 'number' ],
+        optional: false,
+        variadic: true
+      })
+    ]
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 1, 2, 3, 'baz' ]), null);
+});
+
+ava.test('match: should match one string argument against a command with one required string parameter and one optional number variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -589,10 +613,13 @@ ava.test('matches: should match one string argument against a command with one r
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), {
+    bar: 'bar',
+    baz: []
+  });
 });
 
-ava.test('matches: should match one number argument against a command with one required string parameter and one optional number variadic parameter', (test) => {
+ava.test('match: should match one number argument against a command with one required string parameter and one optional number variadic parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -611,10 +638,10 @@ ava.test('matches: should match one number argument against a command with one r
     ]
   });
 
-  test.false(Signature.matches(signature, [ 'foo', 3 ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 3 ]), null);
 });
 
-ava.test('matches: should match three arguments to a comment with one optional string parameter and one optional variadic number parameter', (test) => {
+ava.test('match: should match three arguments to a command with one optional string parameter and one optional variadic number parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -633,10 +660,13 @@ ava.test('matches: should match three arguments to a comment with one optional s
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar', 3, 4 ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 3, 4 ]), {
+    bar: 'bar',
+    baz: [ 3, 4 ]
+  });
 });
 
-ava.test('matches: should match one argument to a comment with one optional string parameter and one optional variadic number parameter', (test) => {
+ava.test('match: should match one argument to a command with one optional string parameter and one optional variadic number parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -655,10 +685,13 @@ ava.test('matches: should match one argument to a comment with one optional stri
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo', 'bar' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), {
+    bar: 'bar',
+    baz: []
+  });
 });
 
-ava.test('matches: should match no arguments to a comment with one optional string parameter and one optional variadic number parameter', (test) => {
+ava.test('match: should match no arguments to a command with one optional string parameter and one optional variadic number parameter', (test) => {
   const signature = new Signature({
     command: [ 'foo' ],
     parameters: [
@@ -677,5 +710,94 @@ ava.test('matches: should match no arguments to a comment with one optional stri
     ]
   });
 
-  test.true(Signature.matches(signature, [ 'foo' ]));
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {
+    baz: []
+  });
+});
+
+ava.test('match: should match three number and string arguments against an empty command with one string and number required variadic parameter', (test) => {
+  const signature = new Signature({
+    command: [],
+    parameters: [
+      new Parameter({
+        name: 'bar',
+        type: [ 'string', 'number' ],
+        optional: false,
+        variadic: true
+      })
+    ]
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 5, 8 ]), {
+    bar: [ 'foo', 5, 8 ]
+  });
+});
+
+ava.test('match: should match a one word command', (test) => {
+  const signature = new Signature({
+    command: [ 'foo' ],
+    parameters: []
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo' ]), {});
+});
+
+ava.test('match: should not match if the command has no arguments but there is an extra word', (test) => {
+  const signature = new Signature({
+    command: [ 'foo' ],
+    parameters: []
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), null);
+});
+
+ava.test('match: should match a two word command', (test) => {
+  const signature = new Signature({
+    command: [ 'foo', 'bar' ],
+    parameters: []
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar' ]), {});
+});
+
+ava.test('match: should match a three word command', (test) => {
+  const signature = new Signature({
+    command: [ 'foo', 'bar', 'baz' ],
+    parameters: []
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz' ]), {});
+});
+
+ava.test('match: should exactly match the command', (test) => {
+  const signature = new Signature({
+    command: [ 'foo', 'bar', 'baz' ],
+    parameters: []
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 'br', 'baz' ]), null);
+});
+
+ava.test('match: should match a three word command with various parameters', (test) => {
+  const signature = new Signature({
+    command: [ 'foo', 'bar', 'baz' ],
+    parameters: [
+      new Parameter({
+        name: 'one',
+        type: [ 'string' ],
+        optional: false
+      }),
+      new Parameter({
+        name: 'two',
+        type: [ 'string', 'number' ],
+        optional: false,
+        variadic: true
+      })
+    ]
+  });
+
+  test.deepEqual(Signature.match(signature, [ 'foo', 'bar', 'baz', 'hello', 'world', 2 ]), {
+    one: 'hello',
+    two: [ 'world', 2 ]
+  });
 });
