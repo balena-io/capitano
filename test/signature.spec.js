@@ -831,3 +831,103 @@ ava.test('match: should match a three word command with various parameters', (te
     two: [ 'world', 2 ]
   });
 });
+
+ava.test('toString: should stringify a no word command without arguments', (test) => {
+  const signature = new Signature({
+    command: [],
+    parameters: []
+  });
+
+  test.is(signature.toString(), '');
+});
+
+ava.test('toString: should stringify a one word command without arguments', (test) => {
+  const signature = new Signature({
+    command: [ 'foo' ],
+    parameters: []
+  });
+
+  test.is(signature.toString(), 'foo');
+});
+
+ava.test('toString: should stringify a multi word command without arguments', (test) => {
+  const signature = new Signature({
+    command: [ 'foo', 'bar', 'baz' ],
+    parameters: []
+  });
+
+  test.is(signature.toString(), 'foo bar baz');
+});
+
+ava.test('toString: should stringify a no word command with arguments', (test) => {
+  const signature = new Signature({
+    command: [],
+    parameters: [
+      new Parameter({
+        name: 'one',
+        type: [ 'string' ],
+        optional: false
+      }),
+      new Parameter({
+        name: 'two',
+        type: [ 'string', 'number' ],
+        optional: true
+      }),
+      new Parameter({
+        name: 'three',
+        type: [ 'string' ],
+        optional: true,
+        variadic: true
+      })
+    ]
+  });
+
+  test.is(signature.toString(), '<one> [two] [three...]');
+});
+
+ava.test('toString: should stringify a one word command with arguments', (test) => {
+  const signature = new Signature({
+    command: [ 'foo' ],
+    parameters: [
+      new Parameter({
+        name: 'one',
+        type: [ 'string' ],
+        optional: false
+      }),
+      new Parameter({
+        name: 'two',
+        type: [ 'string', 'number' ],
+        optional: true
+      }),
+      new Parameter({
+        name: 'three',
+        type: [ 'string' ],
+        optional: true,
+        variadic: true
+      })
+    ]
+  });
+
+  test.is(signature.toString(), 'foo <one> [two] [three...]');
+});
+
+ava.test('toString: should stringify a multi word command with arguments', (test) => {
+  const signature = new Signature({
+    command: [ 'foo', 'bar', 'baz' ],
+    parameters: [
+      new Parameter({
+        name: 'one',
+        type: [ 'string' ],
+        optional: false
+      }),
+      new Parameter({
+        name: 'two',
+        type: [ 'string' ],
+        optional: false,
+        variadic: true
+      })
+    ]
+  });
+
+  test.is(signature.toString(), 'foo bar baz <one> <two...>');
+});
