@@ -84,7 +84,7 @@ ava.test('constructor: should throw if options contains an object value', (test)
         }
       }
     });
-  }, 'Invalid example option value: [object Object]');
+  }, 'Invalid example options: [object Object]');
 });
 
 ava.test('constructor: should throw if options is empty', (test) => {

@@ -248,7 +248,7 @@ ava.test('constructor: should throw if there are two parameters with the same na
         })
       ]
     });
-  }, 'Invalid signature parameters: duplicated parameters');
+  }, 'Invalid signature parameters: <foo>,[foo]');
 });
 
 ava.test('match: should match no arguments with a signature with an optional parameter', (test) => {
