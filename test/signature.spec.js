@@ -20,6 +20,24 @@ const ava = require('ava');
 const Signature = require('../lib/signature');
 const Parameter = require('../lib/parameter');
 
+ava.test('constructor: should throw if options is empty', (test) => {
+  test.throws(() => {
+    new Signature();
+  }, 'Invalid signature: undefined');
+});
+
+ava.test('constructor: should throw if options is null', (test) => {
+  test.throws(() => {
+    new Signature(null);
+  }, 'Invalid signature: null');
+});
+
+ava.test('constructor: should throw if options is no a plain object', (test) => {
+  test.throws(() => {
+    new Signature([ 1, 2, 3 ]);
+  }, 'Invalid signature: 1,2,3');
+});
+
 ava.test('constructor: should throw if command is not an array', (test) => {
   test.throws(() => {
     new Signature({
