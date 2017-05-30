@@ -451,6 +451,25 @@ ava.test('constructor: should store the multiple option flag', (test) => {
   test.deepEqual(option.multiple, true);
 });
 
+ava.test('constructor: should set the optional flag to true by default', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'boolean' ]
+  });
+
+  test.deepEqual(option.optional, true);
+});
+
+ava.test('constructor: should store the optional option flag', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'boolean' ],
+    optional: false
+  });
+
+  test.deepEqual(option.optional, false);
+});
+
 ava.test('constructor: should set inverse to false by default on string options', (test) => {
   const option = new Option({
     name: 'foo',
