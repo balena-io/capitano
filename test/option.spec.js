@@ -171,6 +171,16 @@ ava.test('constructor: should throw if description is not a string', (test) => {
   }, 'Invalid option description: 1');
 });
 
+ava.test('constructor: should throw if placeholder is not a string', (test) => {
+  test.throws(() => {
+    new Option({
+      name: 'foo',
+      placeholder: 1,
+      type: [ 'string' ]
+    });
+  }, 'Invalid option placeholder: 1');
+});
+
 ava.test('constructor: should throw if the default value is not valid', (test) => {
   test.throws(() => {
     new Option({
@@ -344,6 +354,35 @@ ava.test('constructor: should store option names with infix hyphens', (test) => 
   });
 
   test.deepEqual(option.name, 'foo-bar');
+});
+
+ava.test('constructor: should default the option placeholder to "value"', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'string' ]
+  });
+
+  test.deepEqual(option.placeholder, 'value');
+});
+
+ava.test('constructor: should store the option placeholder', (test) => {
+  const option = new Option({
+    name: 'foo',
+    placeholder: 'bar',
+    type: [ 'string' ]
+  });
+
+  test.deepEqual(option.placeholder, 'bar');
+});
+
+ava.test('constructor: should trim the option placeholder', (test) => {
+  const option = new Option({
+    name: 'foo',
+    placeholder: '   bar   ',
+    type: [ 'string' ]
+  });
+
+  test.deepEqual(option.placeholder, 'bar');
 });
 
 ava.test('constructor: should store the option description', (test) => {
