@@ -41,3 +41,9 @@ ava.test('every property should contain an endOfParameterSymbol string', (test) 
     test.true(_.isString(value.endOfParameterSymbol));
   });
 });
+
+ava.test('every property should contain an optionToString function', (test) => {
+  _.each(MODES, (value) => {
+    test.true(_.isFunction(value.optionToString));
+  });
+});

@@ -7,7 +7,7 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless optional by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -17,6 +17,7 @@
 'use strict';
 
 const ava = require('ava');
+const _ = require('lodash');
 const Option = require('../lib/option');
 
 ava.test('constructor: should throw if no name', (test) => {
@@ -239,6 +240,16 @@ ava.test('constructor: should throw if aliases contain duplicate elements', (tes
       aliases: [ 'f', 'f' ]
     });
   }, 'Invalid option aliases: f,f');
+});
+
+ava.test('constructor: should throw if optional is not boolean', (test) => {
+  test.throws(() => {
+    new Option({
+      name: 'foo',
+      type: [ 'string' ],
+      optional: 1
+    });
+  }, 'Invalid option optional flag: 1');
 });
 
 ava.test('constructor: should throw if multiple is not boolean', (test) => {
@@ -630,4 +641,527 @@ ava.test('isBoolean: should return false if variable is string and number', (tes
   });
 
   test.false(Option.isBoolean(option));
+});
+
+ava.test('isString: should use a custom placeholder', (test) => {
+  const option = new Option({
+    name: 'foo',
+    placeholder: 'bar',
+    optional: false,
+    type: [ 'string' ]
+  });
+
+  test.is(option.toString(), '--foo <bar>');
+});
+
+ava.test('isString: should allow a hyphened option', (test) => {
+  const option = new Option({
+    name: 'foo-bar',
+    optional: false,
+    type: [ 'string' ]
+  });
+
+  test.is(option.toString(), '--foo-bar <value>');
+});
+
+ava.test('isString: should allow a hyphened alias', (test) => {
+  const option = new Option({
+    name: 'foo',
+    aliases: [ 'bar-baz' ],
+    optional: false,
+    type: [ 'string' ]
+  });
+
+  test.is(option.toString(), '--foo, --bar-baz <value>');
+});
+
+_.each([
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      multiple: false,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo <value>]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      multiple: true,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo <value>]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      multiple: false,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo <value>'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      multiple: true,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo <value>...'
+    }
+  },
+
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f' ],
+      multiple: false,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f <value>]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f' ],
+      multiple: true,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f <value>]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f' ],
+      multiple: false,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f <value>'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f' ],
+      multiple: true,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f <value>...'
+    }
+  },
+
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: false,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f, --bar <value>]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: true,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f, --bar <value>]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: false,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f, --bar <value>'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: true,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f, --bar <value>...'
+    }
+  },
+
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: false,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: false,
+      inverse: true,
+      optional: true
+    },
+    expected: {
+      unix: '[--[no-]foo]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: true,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: true,
+      inverse: true,
+      optional: true
+    },
+    expected: {
+      unix: '[--[no-]foo]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: false,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: false,
+      inverse: true,
+      optional: false
+    },
+    expected: {
+      unix: '--[no-]foo'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: true,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      multiple: true,
+      inverse: true,
+      optional: false
+    },
+    expected: {
+      unix: '--[no-]foo...'
+    }
+  },
+
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: false,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: false,
+      inverse: true,
+      optional: true
+    },
+    expected: {
+      unix: '[--[no-]foo, -[-no-]f]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: true,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: true,
+      inverse: true,
+      optional: true
+    },
+    expected: {
+      unix: '[--[no-]foo, -[-no-]f]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: false,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: false,
+      inverse: true,
+      optional: false
+    },
+    expected: {
+      unix: '--[no-]foo, -[-no-]f'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: true,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f' ],
+      multiple: true,
+      inverse: true,
+      optional: false
+    },
+    expected: {
+      unix: '--[no-]foo, -[-no-]f...'
+    }
+  },
+
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: false,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f, --bar]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: false,
+      inverse: true,
+      optional: true
+    },
+    expected: {
+      unix: '[--[no-]foo, -[-no-]f, --[no-]bar]'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: true,
+      inverse: false,
+      optional: true
+    },
+    expected: {
+      unix: '[--foo, -f, --bar]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: true,
+      inverse: true,
+      optional: true
+    },
+    expected: {
+      unix: '[--[no-]foo, -[-no-]f, --[no-]bar]...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: false,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f, --bar'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: false,
+      inverse: true,
+      optional: false
+    },
+    expected: {
+      unix: '--[no-]foo, -[-no-]f, --[no-]bar'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: true,
+      inverse: false,
+      optional: false
+    },
+    expected: {
+      unix: '--foo, -f, --bar...'
+    }
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [ 'f', 'bar' ],
+      multiple: true,
+      inverse: true,
+      optional: false
+    },
+    expected: {
+      unix: '--[no-]foo, -[-no-]f, --[no-]bar...'
+    }
+  }
+
+], (testCase) => {
+
+  ava.test(_.join([
+    'toString:',
+    `optional=${testCase.option.optional}`,
+    `type=${testCase.option.type}`,
+    `aliases=${testCase.option.aliases.length}`,
+    `multiple=${testCase.option.multiple}`,
+    `inverse=${testCase.option.inverse}`
+  ], ' '), (test) => {
+    const option = new Option(testCase.option);
+    test.is(option.toString(), testCase.expected.unix);
+  });
+
 });
