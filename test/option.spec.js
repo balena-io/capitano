@@ -20,6 +20,24 @@ const ava = require('ava');
 const _ = require('lodash');
 const Option = require('../lib/option');
 
+ava.test('constructor: should throw if options is empty', (test) => {
+  test.throws(() => {
+    new Option();
+  }, 'Invalid option: undefined');
+});
+
+ava.test('constructor: should throw if options is null', (test) => {
+  test.throws(() => {
+    new Option(null);
+  }, 'Invalid option: null');
+});
+
+ava.test('constructor: should throw if options is no a plain object', (test) => {
+  test.throws(() => {
+    new Option([ 1, 2, 3 ]);
+  }, 'Invalid option: 1,2,3');
+});
+
 ava.test('constructor: should throw if no name', (test) => {
   test.throws(() => {
     new Option({
