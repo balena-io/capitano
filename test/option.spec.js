@@ -260,6 +260,16 @@ ava.test('constructor: should throw if aliases contain duplicate elements', (tes
   }, 'Invalid option aliases: f,f');
 });
 
+ava.test('constructor: should throw if the option name is contained in the aliases', (test) => {
+  test.throws(() => {
+    new Option({
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      aliases: [ 'foo', 'f' ]
+    });
+  }, 'Invalid option aliases: foo,f');
+});
+
 ava.test('constructor: should throw if aliases contain strings with spaces', (test) => {
   test.throws(() => {
     new Option({
