@@ -36,6 +36,18 @@ ava.test('every property should contain an optionLong regex', (test) => {
   });
 });
 
+ava.test('every property should contain an parameterVariadic regex', (test) => {
+  _.each(MODES, (value) => {
+    test.true(_.isRegExp(value.parameterVariadic));
+  });
+});
+
+ava.test('every property should contain an parameterOptional regex', (test) => {
+  _.each(MODES, (value) => {
+    test.true(_.isRegExp(value.parameterOptional));
+  });
+});
+
 ava.test('every property should contain an endOfParameterSymbol string', (test) => {
   _.each(MODES, (value) => {
     test.true(_.isString(value.endOfParameterSymbol));
@@ -45,5 +57,11 @@ ava.test('every property should contain an endOfParameterSymbol string', (test) 
 ava.test('every property should contain an optionToString function', (test) => {
   _.each(MODES, (value) => {
     test.true(_.isFunction(value.optionToString));
+  });
+});
+
+ava.test('every property should contain an parameterToString function', (test) => {
+  _.each(MODES, (value) => {
+    test.true(_.isFunction(value.parameterToString));
   });
 });
