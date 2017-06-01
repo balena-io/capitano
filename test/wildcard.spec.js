@@ -277,6 +277,14 @@ _.each([
     test.deepEqual(wildcard.getTypes(wildcardString), parameter.type);
   });
 
+  ava.test(`isVariadic: should return ${testCase.parameter.variadic} for ${wildcardString}`, (test) => {
+    test.is(wildcard.isVariadic(wildcardString), testCase.parameter.variadic);
+  });
+
+  ava.test(`isOptional: should return ${testCase.parameter.optional} for ${wildcardString}`, (test) => {
+    test.is(wildcard.isOptional(wildcardString), testCase.parameter.optional);
+  });
+
   ava.test(`parse: should parse ${wildcardString}`, (test) => {
     test.deepEqual(wildcard.parse(wildcardString), {
       type: parameter.type,
