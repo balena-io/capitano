@@ -444,3 +444,277 @@ ava.test('should find disambiguous commands where one is a subset of the other',
   test.deepEqual(store.look([ 'hello', 'world' ]), [ shortCommand ]);
   test.deepEqual(store.look([ 'hello', 'world', 'xxx' ]), [ longCommand ]);
 });
+
+ava.test('should fail to retrieve a command with a required variadic parameter, using no words', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar' ]), []);
+});
+
+ava.test('should store and retrieve a command with a required variadic parameter, using one word', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', 'value' ]), [ command ]);
+});
+
+ava.test('should store and retrieve a command with a required variadic parameter, using two words', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', 'value1', 'value2' ]), [ command ]);
+});
+
+ava.test('should store and retrieve a command with a required variadic parameter, using three words', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', 'value1', 'value2', 'value3' ]), [ command ]);
+});
+
+ava.test('should store and retrieve a command with a optional variadic parameter, using no words', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: true,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar' ]), [ command ]);
+});
+
+ava.test('should store and retrieve a command with a optional variadic parameter, using one word', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: true,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', 'value' ]), [ command ]);
+});
+
+ava.test('should store and retrieve a command with a optional variadic parameter, using two words', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: true,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', 'value1', 'value2' ]), [ command ]);
+});
+
+ava.test('should store and retrieve a command with a optional variadic parameter, using three words', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: true,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', 'value1', 'value2', 'value3' ]), [ command ]);
+});
+
+ava.test('should ignore variadic commands when the type does not match', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'number' ],
+          optional: true,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', '1', '2', 'foo' ]), []);
+});
+
+ava.test('should store and retrieve a command with a multi-type variadic parameter', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string', 'number' ],
+          optional: true,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(command);
+  test.deepEqual(store.look([ 'foo', 'bar', '1', '2', 'value3' ]), [ command ]);
+});
+
+ava.test('should ignore a command that is a subset of a variadic command when many parameters are passed', (test) => {
+  const nonVariadicCommand = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: false
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  const variadicCommand = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(nonVariadicCommand);
+  store.set(variadicCommand);
+
+  test.deepEqual(store.look([ 'foo', 'bar', 'value1', 'value2' ]), [ variadicCommand ]);
+});
+
+ava.test('should return ambiguous results given a command that is a subset of a variadic command and both match', (test) => {
+  const nonVariadicCommand = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: false
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  const variadicCommand = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          optional: false,
+          variadic: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  store.set(nonVariadicCommand);
+  store.set(variadicCommand);
+
+  test.deepEqual(store.look([ 'foo', 'bar', 'value1' ]), [ nonVariadicCommand, variadicCommand ]);
+});
