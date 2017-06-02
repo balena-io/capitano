@@ -19,6 +19,7 @@
 const ava = require('ava');
 const _ = require('lodash');
 const words = require('../lib/words');
+const types = require('../lib/types');
 
 _.each([
   [ true, '1' ],
@@ -34,5 +35,45 @@ _.each([
 
   ava.test(`lookslikeNumber: should return ${expected} for ${word}`, (test) => {
     test.is(words.lookslikeNumber(word), expected);
+  });
+});
+
+_.each([
+  [ 'foo', [ types.supported.STRING ], 'foo' ],
+  [ 'true', [ types.supported.STRING ], 'true' ],
+  [ '', [ types.supported.STRING ], '' ],
+
+  [ '1', [ types.supported.STRING ], '1' ],
+  [ '5.55', [ types.supported.STRING ], '5.55' ],
+  [ '-3', [ types.supported.STRING ], '-3' ],
+  [ '0', [ types.supported.STRING ], '0' ],
+
+  [ '1', [ types.supported.NUMBER ], 1 ],
+  [ '5.55', [ types.supported.NUMBER ], 5.55 ],
+  [ '-3', [ types.supported.NUMBER ], -3 ],
+  [ '0', [ types.supported.NUMBER ], 0 ],
+
+  [ 'foo', [ types.supported.NUMBER ], null ],
+  [ 'true', [ types.supported.NUMBER ], null ],
+  [ '', [ types.supported.NUMBER ], null ],
+
+  [ '1', [ types.supported.STRING, types.supported.NUMBER ], 1 ],
+  [ '5.55', [ types.supported.STRING, types.supported.NUMBER ], 5.55 ],
+  [ '-3', [ types.supported.STRING, types.supported.NUMBER ], -3 ],
+  [ '0', [ types.supported.STRING, types.supported.NUMBER ], 0 ],
+
+  [ 'true', [ types.supported.BOOLEAN ], true ],
+  [ 'false', [ types.supported.BOOLEAN ], false ],
+  [ 'true', [ types.supported.BOOLEAN, types.supported.STRING ], true ],
+  [ 'false', [ types.supported.BOOLEAN, types.supported.STRING ], false ],
+
+  [ 'foo', [ types.supported.BOOLEAN ], null ],
+  [ 'True', [ types.supported.BOOLEAN ], null ],
+  [ 'False', [ types.supported.BOOLEAN ], null ]
+], (testCase) => {
+  const [ word, type, expected ] = testCase;
+
+  ava.test(`evaluate: should evaluate "${word}" as "${expected}" when type=${type}`, (test) => {
+    test.is(words.evaluate(type, word), expected);
   });
 });
