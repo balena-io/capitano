@@ -290,16 +290,6 @@ ava.test('constructor: should throw if optional is not boolean', (test) => {
   }, 'Invalid option optional flag: 1');
 });
 
-ava.test('constructor: should throw if multiple is not boolean', (test) => {
-  test.throws(() => {
-    new Option({
-      name: 'foo',
-      type: [ 'string' ],
-      multiple: 1
-    });
-  }, 'Invalid option multiple flag: 1');
-});
-
 ava.test('constructor: should throw if environment is not boolean nor string', (test) => {
   test.throws(() => {
     new Option({
@@ -491,34 +481,6 @@ ava.test('constructor: should store option aliases', (test) => {
   test.deepEqual(option.aliases, [ 'f', 'b' ]);
 });
 
-ava.test('constructor: should set multiple to false by default on string options', (test) => {
-  const option = new Option({
-    name: 'foo',
-    type: [ 'string' ]
-  });
-
-  test.deepEqual(option.multiple, false);
-});
-
-ava.test('constructor: should set multiple to false by default on boolean options', (test) => {
-  const option = new Option({
-    name: 'foo',
-    type: [ 'boolean' ]
-  });
-
-  test.deepEqual(option.multiple, false);
-});
-
-ava.test('constructor: should store the multiple option flag', (test) => {
-  const option = new Option({
-    name: 'foo',
-    type: [ 'boolean' ],
-    multiple: true
-  });
-
-  test.deepEqual(option.multiple, true);
-});
-
 ava.test('constructor: should set the optional flag to true by default', (test) => {
   const option = new Option({
     name: 'foo',
@@ -671,7 +633,6 @@ _.each([
       name: 'foo',
       type: [ 'string' ],
       aliases: [],
-      multiple: false,
       optional: true
     },
     expected: {
@@ -683,35 +644,10 @@ _.each([
       name: 'foo',
       type: [ 'string' ],
       aliases: [],
-      multiple: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--foo <value>]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'string' ],
-      aliases: [],
-      multiple: false,
       optional: false
     },
     expected: {
       unix: '--foo <value>'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'string' ],
-      aliases: [],
-      multiple: true,
-      optional: false
-    },
-    expected: {
-      unix: '--foo <value>...'
     }
   },
 
@@ -720,7 +656,6 @@ _.each([
       name: 'foo',
       type: [ 'string' ],
       aliases: [ 'f' ],
-      multiple: false,
       optional: true
     },
     expected: {
@@ -732,35 +667,10 @@ _.each([
       name: 'foo',
       type: [ 'string' ],
       aliases: [ 'f' ],
-      multiple: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--foo, -f <value>]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'string' ],
-      aliases: [ 'f' ],
-      multiple: false,
       optional: false
     },
     expected: {
       unix: '--foo, -f <value>'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'string' ],
-      aliases: [ 'f' ],
-      multiple: true,
-      optional: false
-    },
-    expected: {
-      unix: '--foo, -f <value>...'
     }
   },
 
@@ -769,7 +679,6 @@ _.each([
       name: 'foo',
       type: [ 'string' ],
       aliases: [ 'f', 'bar' ],
-      multiple: false,
       optional: true
     },
     expected: {
@@ -781,35 +690,10 @@ _.each([
       name: 'foo',
       type: [ 'string' ],
       aliases: [ 'f', 'bar' ],
-      multiple: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--foo, -f, --bar <value>]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'string' ],
-      aliases: [ 'f', 'bar' ],
-      multiple: false,
       optional: false
     },
     expected: {
       unix: '--foo, -f, --bar <value>'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'string' ],
-      aliases: [ 'f', 'bar' ],
-      multiple: true,
-      optional: false
-    },
-    expected: {
-      unix: '--foo, -f, --bar <value>...'
     }
   },
 
@@ -818,7 +702,6 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [],
-      multiple: false,
       optional: true
     },
     expected: {
@@ -830,23 +713,10 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [],
-      multiple: false,
       optional: false
     },
     expected: {
       unix: '--foo'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [],
-      multiple: true,
-      optional: false
-    },
-    expected: {
-      unix: '--foo...'
     }
   },
 
@@ -855,7 +725,6 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f' ],
-      multiple: false,
       optional: true
     },
     expected: {
@@ -867,35 +736,10 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f' ],
-      multiple: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--foo, -f]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f' ],
-      multiple: false,
       optional: false
     },
     expected: {
       unix: '--foo, -f'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f' ],
-      multiple: true,
-      optional: false
-    },
-    expected: {
-      unix: '--foo, -f...'
     }
   },
 
@@ -904,7 +748,6 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f', 'bar' ],
-      multiple: false,
       optional: true
     },
     expected: {
@@ -916,35 +759,10 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f', 'bar' ],
-      multiple: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--foo, -f, --bar]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f', 'bar' ],
-      multiple: false,
       optional: false
     },
     expected: {
       unix: '--foo, -f, --bar'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f', 'bar' ],
-      multiple: true,
-      optional: false
-    },
-    expected: {
-      unix: '--foo, -f, --bar...'
     }
   }
 
@@ -954,8 +772,7 @@ _.each([
     'toString:',
     `optional=${testCase.option.optional}`,
     `type=${testCase.option.type}`,
-    `aliases=${testCase.option.aliases.length}`,
-    `multiple=${testCase.option.multiple}`
+    `aliases=${testCase.option.aliases.length}`
   ], ' '), (test) => {
     const option = new Option(testCase.option);
     test.is(option.toString(), testCase.expected.unix);
