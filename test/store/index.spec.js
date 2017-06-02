@@ -18,10 +18,10 @@
 
 const ava = require('ava');
 const _ = require('lodash');
-const Command = require('../lib/command');
-const Signature = require('../lib/signature');
-const Parameter = require('../lib/parameter');
-const store = require('../lib/store');
+const Command = require('../../lib/command');
+const Signature = require('../../lib/signature');
+const Parameter = require('../../lib/parameter');
+const store = require('../../lib/store');
 
 ava.test.beforeEach(store.clear);
 

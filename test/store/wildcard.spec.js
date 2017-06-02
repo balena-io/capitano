@@ -18,8 +18,8 @@
 
 const ava = require('ava');
 const _ = require('lodash');
-const Parameter = require('../lib/parameter');
-const wildcard = require('../lib/wildcard');
+const Parameter = require('../../lib/parameter');
+const wildcard = require('../../lib/store/wildcard');
 
 ava.test('getTypes: should return null if the wildcard is empty', (test) => {
   test.is(wildcard.getTypes('<>'), null);
