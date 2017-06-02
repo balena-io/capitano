@@ -340,26 +340,6 @@ ava.test('constructor: should throw if environment contains invalid characters',
   }, 'Invalid option environment: %foo $bar');
 });
 
-ava.test('constructor: should throw if inverse is not boolean', (test) => {
-  test.throws(() => {
-    new Option({
-      name: 'foo',
-      type: [ 'boolean' ],
-      inverse: 1
-    });
-  }, 'Invalid option inverse flag: 1');
-});
-
-ava.test('constructor: should throw if inverse is set but type is not boolean', (test) => {
-  test.throws(() => {
-    new Option({
-      name: 'foo',
-      type: [ 'string' ],
-      inverse: true
-    });
-  }, 'Invalid option inverse flag: can\'t set when type is boolean');
-});
-
 ava.test('constructor: should store the option name', (test) => {
   const option = new Option({
     name: 'foo',
@@ -558,34 +538,6 @@ ava.test('constructor: should store the optional option flag', (test) => {
   test.deepEqual(option.optional, false);
 });
 
-ava.test('constructor: should set inverse to false by default on string options', (test) => {
-  const option = new Option({
-    name: 'foo',
-    type: [ 'string' ]
-  });
-
-  test.deepEqual(option.inverse, false);
-});
-
-ava.test('constructor: should set inverse to false by default on boolean options', (test) => {
-  const option = new Option({
-    name: 'foo',
-    type: [ 'boolean' ]
-  });
-
-  test.deepEqual(option.inverse, false);
-});
-
-ava.test('constructor: should store the inverse option flag on boolean options', (test) => {
-  const option = new Option({
-    name: 'foo',
-    type: [ 'boolean' ],
-    inverse: true
-  });
-
-  test.deepEqual(option.inverse, true);
-});
-
 ava.test('constructor: should set environment to true by default', (test) => {
   const option = new Option({
     name: 'foo',
@@ -720,7 +672,6 @@ _.each([
       type: [ 'string' ],
       aliases: [],
       multiple: false,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -733,7 +684,6 @@ _.each([
       type: [ 'string' ],
       aliases: [],
       multiple: true,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -746,7 +696,6 @@ _.each([
       type: [ 'string' ],
       aliases: [],
       multiple: false,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -759,7 +708,6 @@ _.each([
       type: [ 'string' ],
       aliases: [],
       multiple: true,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -773,7 +721,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f' ],
       multiple: false,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -786,7 +733,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f' ],
       multiple: true,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -799,7 +745,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f' ],
       multiple: false,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -812,7 +757,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f' ],
       multiple: true,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -826,7 +770,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f', 'bar' ],
       multiple: false,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -839,7 +782,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f', 'bar' ],
       multiple: true,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -852,7 +794,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f', 'bar' ],
       multiple: false,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -865,7 +806,6 @@ _.each([
       type: [ 'string' ],
       aliases: [ 'f', 'bar' ],
       multiple: true,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -879,7 +819,6 @@ _.each([
       type: [ 'boolean' ],
       aliases: [],
       multiple: false,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -892,46 +831,6 @@ _.each([
       type: [ 'boolean' ],
       aliases: [],
       multiple: false,
-      inverse: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--[no-]foo]'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [],
-      multiple: true,
-      inverse: false,
-      optional: true
-    },
-    expected: {
-      unix: '[--foo]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [],
-      multiple: true,
-      inverse: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--[no-]foo]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [],
-      multiple: false,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -943,38 +842,11 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [],
-      multiple: false,
-      inverse: true,
-      optional: false
-    },
-    expected: {
-      unix: '--[no-]foo'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [],
       multiple: true,
-      inverse: false,
       optional: false
     },
     expected: {
       unix: '--foo...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [],
-      multiple: true,
-      inverse: true,
-      optional: false
-    },
-    expected: {
-      unix: '--[no-]foo...'
     }
   },
 
@@ -984,7 +856,6 @@ _.each([
       type: [ 'boolean' ],
       aliases: [ 'f' ],
       multiple: false,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -996,21 +867,7 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f' ],
-      multiple: false,
-      inverse: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--[no-]foo, -[-no-]f]'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f' ],
       multiple: true,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -1022,21 +879,7 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f' ],
-      multiple: true,
-      inverse: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--[no-]foo, -[-no-]f]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f' ],
       multiple: false,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -1048,38 +891,11 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f' ],
-      multiple: false,
-      inverse: true,
-      optional: false
-    },
-    expected: {
-      unix: '--[no-]foo, -[-no-]f'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f' ],
       multiple: true,
-      inverse: false,
       optional: false
     },
     expected: {
       unix: '--foo, -f...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f' ],
-      multiple: true,
-      inverse: true,
-      optional: false
-    },
-    expected: {
-      unix: '--[no-]foo, -[-no-]f...'
     }
   },
 
@@ -1089,7 +905,6 @@ _.each([
       type: [ 'boolean' ],
       aliases: [ 'f', 'bar' ],
       multiple: false,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -1101,21 +916,7 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f', 'bar' ],
-      multiple: false,
-      inverse: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--[no-]foo, -[-no-]f, --[no-]bar]'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f', 'bar' ],
       multiple: true,
-      inverse: false,
       optional: true
     },
     expected: {
@@ -1127,21 +928,7 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f', 'bar' ],
-      multiple: true,
-      inverse: true,
-      optional: true
-    },
-    expected: {
-      unix: '[--[no-]foo, -[-no-]f, --[no-]bar]...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f', 'bar' ],
       multiple: false,
-      inverse: false,
       optional: false
     },
     expected: {
@@ -1153,38 +940,11 @@ _.each([
       name: 'foo',
       type: [ 'boolean' ],
       aliases: [ 'f', 'bar' ],
-      multiple: false,
-      inverse: true,
-      optional: false
-    },
-    expected: {
-      unix: '--[no-]foo, -[-no-]f, --[no-]bar'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f', 'bar' ],
       multiple: true,
-      inverse: false,
       optional: false
     },
     expected: {
       unix: '--foo, -f, --bar...'
-    }
-  },
-  {
-    option: {
-      name: 'foo',
-      type: [ 'boolean' ],
-      aliases: [ 'f', 'bar' ],
-      multiple: true,
-      inverse: true,
-      optional: false
-    },
-    expected: {
-      unix: '--[no-]foo, -[-no-]f, --[no-]bar...'
     }
   }
 
@@ -1195,8 +955,7 @@ _.each([
     `optional=${testCase.option.optional}`,
     `type=${testCase.option.type}`,
     `aliases=${testCase.option.aliases.length}`,
-    `multiple=${testCase.option.multiple}`,
-    `inverse=${testCase.option.inverse}`
+    `multiple=${testCase.option.multiple}`
   ], ' '), (test) => {
     const option = new Option(testCase.option);
     test.is(option.toString(), testCase.expected.unix);
