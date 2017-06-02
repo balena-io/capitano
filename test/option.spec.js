@@ -770,12 +770,172 @@ _.each([
 
   ava.test(_.join([
     'toString:',
+    `should return ${testCase.string.unix} given`,
     `optional=${testCase.option.optional}`,
     `type=${testCase.option.type}`,
     `aliases=${testCase.option.aliases.length}`
   ], ' '), (test) => {
     const option = new Option(testCase.option);
-    test.is(option.toString(), testCase.expected.unix);
+    test.is(option.toString(), testCase.string.unix);
   });
 
+});
+
+_.each([
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      optional: false
+    },
+    values: [
+      [ undefined, null ],
+      [ '', null ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', '1' ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      optional: true
+    },
+    values: [
+      [ undefined, undefined ],
+      [ '', undefined ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', '1' ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'number' ],
+      aliases: [],
+      optional: false
+    },
+    values: [
+      [ undefined, null ],
+      [ '', null ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', null ],
+      [ '1', 1 ],
+      [ 'true', null ],
+      [ 'false', null ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'number' ],
+      aliases: [],
+      optional: true
+    },
+    values: [
+      [ undefined, undefined ],
+      [ '', null ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', null ],
+      [ '1', 1 ],
+      [ 'true', null ],
+      [ 'false', null ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      optional: false
+    },
+    values: [
+      [ undefined, null ],
+      [ '', null ],
+      [ true, true ],
+      [ false, false ],
+      [ 'foo', null ],
+      [ '1', null ],
+      [ 'true', true ],
+      [ 'false', false ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      optional: true
+    },
+    values: [
+      [ undefined, undefined ],
+      [ '', null ],
+      [ true, true ],
+      [ false, false ],
+      [ 'foo', null ],
+      [ '1', null ],
+      [ 'true', true ],
+      [ 'false', false ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      aliases: [],
+      optional: false
+    },
+    values: [
+      [ undefined, null ],
+      [ '', null ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', 1 ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      aliases: [],
+      optional: true
+    },
+    values: [
+      [ undefined, undefined ],
+      [ '', undefined ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', 1 ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  }
+], (testCase) => {
+  _.each(testCase.values, ([ value, expected ]) => {
+    ava.test(_.join([
+      'compile:',
+      `should return ${expected} for ${value} given`,
+      `optional=${testCase.option.optional}`,
+      `type=${testCase.option.type}`
+    ], ' '), (test) => {
+      const option = new Option(testCase.option);
+      test.is(Option.compile(option, value), expected);
+    });
+  });
 });
