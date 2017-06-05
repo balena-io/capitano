@@ -20,6 +20,7 @@ const ava = require('ava');
 const _ = require('lodash');
 const Command = require('../lib/command');
 const Signature = require('../lib/signature');
+const Parameter = require('../lib/parameter');
 const Example = require('../lib/example');
 const Option = require('../lib/option');
 
@@ -410,4 +411,715 @@ ava.test('constructor: should store the command action', (test) => {
   });
 
   test.deepEqual(command.action, action);
+});
+
+ava.test('compile: should compile a command without parameters nor options', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar' ],
+    options: {}
+  }), {
+    params: {},
+    options: {}
+  });
+});
+
+ava.test('compile: should compile a command with a single required parameter', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          description: 'baz parameter',
+          optional: false
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar', 'xxx' ],
+    options: {}
+  }), {
+    params: {
+      baz: 'xxx'
+    },
+    options: {}
+  });
+});
+
+ava.test('compile: should not compile a command with a single missing required parameter', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          description: 'baz parameter',
+          optional: false
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar' ],
+    options: {}
+  }), null);
+});
+
+ava.test('compile: should compile a command with a single passed optional parameter', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          description: 'baz parameter',
+          optional: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar', 'xxx' ],
+    options: {}
+  }), {
+    params: {
+      baz: 'xxx'
+    },
+    options: {}
+  });
+});
+
+ava.test('compile: should compile a command with a single missing optional parameter', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'string' ],
+          description: 'baz parameter',
+          optional: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar' ],
+    options: {}
+  }), {
+    params: {
+      baz: undefined
+    },
+    options: {}
+  });
+});
+
+ava.test('compile: should compile a command with a variadic number parameter', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'number' ],
+          description: 'baz parameter',
+          variadic: true,
+          optional: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar', '1', '2', '3' ],
+    options: {}
+  }), {
+    params: {
+      baz: [ 1, 2, 3 ]
+    },
+    options: {}
+  });
+});
+
+ava.test('compile: should return null if there is a command mismatch', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'number' ],
+          description: 'baz parameter',
+          variadic: true,
+          optional: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'qux' ],
+    options: {}
+  }), null);
+});
+
+ava.test('compile: should not compile a command with a variadic number parameter if one of the args does not match', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'number' ],
+          description: 'baz parameter',
+          variadic: true,
+          optional: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar', '1', 'foo', '3' ],
+    options: {}
+  }), null);
+});
+
+ava.test('compile: should compile a command with a variadic number and string parameter if the types match', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo', 'bar' ],
+      parameters: [
+        new Parameter({
+          name: 'baz',
+          type: [ 'number', 'string' ],
+          description: 'baz parameter',
+          variadic: true,
+          optional: true
+        })
+      ]
+    }),
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo', 'bar', '1', 'foo', '3' ],
+    options: {}
+  }), {
+    params: {
+      baz: [ 1, 'foo', 3 ]
+    },
+    options: {}
+  });
+});
+
+ava.test('compile: should return null if a required string option is missing', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {}
+  }), null);
+});
+
+ava.test('compile: should return null if a required number option is invalid', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'number' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: 'foo'
+    }
+  }), null);
+});
+
+ava.test('compile: should return null if an optional number option is invalid', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'number' ],
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: 'foo'
+    }
+  }), null);
+});
+
+ava.test('compile: should compile a single required string option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: 'baz'
+    }
+  }), {
+    params: {},
+    options: {
+      bar: 'baz'
+    }
+  });
+});
+
+ava.test('compile: should compile a missing optional string option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {}
+  }), {
+    params: {},
+    options: {
+      bar: undefined
+    }
+  });
+});
+
+ava.test('compile: should compile a passed optional string option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: 'baz'
+    }
+  }), {
+    params: {},
+    options: {
+      bar: 'baz'
+    }
+  });
+});
+
+ava.test('compile: should compile a truthy boolean required option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: true
+    }
+  }), {
+    params: {},
+    options: {
+      bar: true
+    }
+  });
+});
+
+ava.test('compile: should compile a falsy boolean required option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: false
+    }
+  }), {
+    params: {},
+    options: {
+      bar: false
+    }
+  });
+});
+
+ava.test('compile: should not compile a missing boolean required option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {}
+  }), null);
+});
+
+ava.test('compile: should compile a truthy boolean optional option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: true
+    }
+  }), {
+    params: {},
+    options: {
+      bar: true
+    }
+  });
+});
+
+ava.test('compile: should compile a falsy boolean optional option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: false
+    }
+  }), {
+    params: {},
+    options: {
+      bar: false
+    }
+  });
+});
+
+ava.test('compile: should compile a missing boolean optional option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {}
+  }), {
+    params: {},
+    options: {
+      bar: false
+    }
+  });
+});
+
+ava.test('compile: should compile a missing boolean optional option with a default value', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        default: true,
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {}
+  }), {
+    params: {},
+    options: {
+      bar: true
+    }
+  });
+});
+
+ava.test('compile: should compile a passed boolean optional option with a default value', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'boolean' ],
+        default: false,
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: true
+    }
+  }), {
+    params: {},
+    options: {
+      bar: true
+    }
+  });
+});
+
+ava.test('compile: should compile a missing string optional option with a default value', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        default: 'hello',
+        optional: true
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {}
+  }), {
+    params: {},
+    options: {
+      bar: 'hello'
+    }
+  });
+});
+
+ava.test('compile: should return null if the user passes non defined options', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        default: 'hello',
+        optional: true
+      }),
+      new Option({
+        name: 'baz',
+        type: [ 'boolean' ]
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      baz: true,
+      qux: true
+    }
+  }), null);
+});
+
+ava.test('compile: should resolve aliases of a single option', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        aliases: [ 'b' ],
+        optional: false
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      b: 'baz'
+    }
+  }), {
+    params: {},
+    options: {
+      bar: 'baz'
+    }
+  });
+});
+
+ava.test('compile: should compile multiple options', (test) => {
+  const command = new Command({
+    signature: new Signature({
+      command: [ 'foo' ]
+    }),
+    options: [
+      new Option({
+        name: 'bar',
+        type: [ 'string' ],
+        default: 'hello'
+      }),
+      new Option({
+        name: 'baz',
+        type: [ 'boolean' ]
+      }),
+      new Option({
+        name: 'qux',
+        type: [ 'number' ],
+        default: 5
+      })
+    ],
+    action: _.constant(Promise.resolve())
+  });
+
+  test.deepEqual(Command.compile(command, {
+    command: [ 'foo' ],
+    options: {
+      bar: 'hey',
+      baz: true
+    }
+  }), {
+    params: {},
+    options: {
+      bar: 'hey',
+      baz: true,
+      qux: 5
+    }
+  });
 });
