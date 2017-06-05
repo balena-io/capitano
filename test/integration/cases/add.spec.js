@@ -7,7 +7,7 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless optional by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -16,11 +16,24 @@
 
 'use strict';
 
-const capitano = require('../..');
+const assert = require('../runner');
 
-capitano.setCommand(require('./commands/greet'));
-capitano.setCommand(require('./commands/add'));
+assert('add: should add two positive integers', [
+  'add',
+  '1',
+  '6'
+], {
+  stdout: [],
+  stderr: [],
+  result: 7
+});
 
-capitano.run(process.argv.slice(2)).then((result) => {
-  console.log(JSON.stringify({ result }));
+assert('add: should add two positive floats', [
+  'add',
+  '3.51',
+  '7.98'
+], {
+  stdout: [],
+  stderr: [],
+  result: 11.49
 });

@@ -16,11 +16,26 @@
 
 'use strict';
 
-const capitano = require('../..');
-
-capitano.setCommand(require('./commands/greet'));
-capitano.setCommand(require('./commands/add'));
-
-capitano.run(process.argv.slice(2)).then((result) => {
-  console.log(JSON.stringify({ result }));
-});
+module.exports = {
+  signature: {
+    command: 'add',
+    parameters: [
+      {
+        name: 'x',
+        type: 'number',
+        description: 'first number',
+        optional: false
+      },
+      {
+        name: 'y',
+        type: 'number',
+        description: 'second number',
+        optional: false
+      }
+    ]
+  },
+  description: 'add two numbers',
+  action: (params) => {
+    return Promise.resolve(params.x + params.y);
+  }
+};
