@@ -462,6 +462,16 @@ ava.test('constructor: should store a default boolean value', (test) => {
   test.deepEqual(option.default, false);
 });
 
+ava.test('constructor: should set optional to true if there is a default value', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'string' ],
+    default: 'bar'
+  });
+
+  test.deepEqual(option.optional, true);
+});
+
 ava.test('constructor: should set no aliases by default', (test) => {
   const option = new Option({
     name: 'foo',
