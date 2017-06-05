@@ -2,7 +2,7 @@
   "name": "capitano",
   "version": "2.0.0",
   "description": "Powerful, non opitionated command line parser for complex applications",
-  "main": "lib/capitano.js",
+  "main": "lib/index.js",
   "scripts": {
     "lint": "eslint lib test",
     "test": "npm run lint && nyc --reporter=lcov ava"
