@@ -1,0 +1,21 @@
+rules:
+  require-jsdoc:
+    - off
+  no-undefined:
+    - off
+  init-declarations:
+    - off
+  no-unused-expressions:
+    - off
+  prefer-arrow-callback:
+    - off
+  no-magic-numbers:
+    - off
+  max-len:
+    - off
+  id-length:
+    - off
+  object-curly-newline:
+    - off
+  no-new:
+    - off

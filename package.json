@@ -1,0 +1,23 @@
+{
+  "name": "capitano",
+  "version": "2.0.0",
+  "description": "Powerful, non opitionated command line parser for complex applications",
+  "main": "lib/capitano.js",
+  "scripts": {
+    "lint": "eslint lib test",
+    "test": "npm run lint && nyc --reporter=lcov ava"
+  },
+  "author": "Juan Cruz Viotti <jviotti@openmailbox.org>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "eslint": "^3.19.0",
+    "eslint-plugin-lodash": "^2.4.2",
+    "nyc": "^10.3.2"
+  },
+  "dependencies": {
+    "generatorics": "^1.1.0",
+    "lodash": "^4.17.4",
+    "strip-indent": "^2.0.0"
+  }
+}
