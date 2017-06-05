@@ -821,6 +821,25 @@ _.each([
   {
     option: {
       name: 'foo',
+      type: [ 'string' ],
+      aliases: [],
+      default: 'hello',
+      optional: true
+    },
+    values: [
+      [ undefined, 'hello' ],
+      [ '', 'hello' ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', '1' ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
       type: [ 'number' ],
       aliases: [],
       optional: false
@@ -845,6 +864,25 @@ _.each([
     },
     values: [
       [ undefined, undefined ],
+      [ '', null ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', null ],
+      [ '1', 1 ],
+      [ 'true', null ],
+      [ 'false', null ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'number' ],
+      aliases: [],
+      default: 5,
+      optional: true
+    },
+    values: [
+      [ undefined, 5 ],
       [ '', null ],
       [ true, null ],
       [ false, null ],
@@ -881,6 +919,44 @@ _.each([
     },
     values: [
       [ undefined, undefined ],
+      [ '', null ],
+      [ true, true ],
+      [ false, false ],
+      [ 'foo', null ],
+      [ '1', null ],
+      [ 'true', true ],
+      [ 'false', false ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      default: true,
+      optional: true
+    },
+    values: [
+      [ undefined, true ],
+      [ '', null ],
+      [ true, true ],
+      [ false, false ],
+      [ 'foo', null ],
+      [ '1', null ],
+      [ 'true', true ],
+      [ 'false', false ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'boolean' ],
+      aliases: [],
+      default: false,
+      optional: true
+    },
+    values: [
+      [ undefined, false ],
       [ '', null ],
       [ true, true ],
       [ false, false ],
@@ -918,6 +994,44 @@ _.each([
     values: [
       [ undefined, undefined ],
       [ '', undefined ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', 1 ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      aliases: [],
+      default: 'hello',
+      optional: true
+    },
+    values: [
+      [ undefined, 'hello' ],
+      [ '', 'hello' ],
+      [ true, null ],
+      [ false, null ],
+      [ 'foo', 'foo' ],
+      [ '1', 1 ],
+      [ 'true', 'true' ],
+      [ 'false', 'false' ]
+    ]
+  },
+  {
+    option: {
+      name: 'foo',
+      type: [ 'string', 'number' ],
+      aliases: [],
+      default: 5,
+      optional: true
+    },
+    values: [
+      [ undefined, 5 ],
+      [ '', 5 ],
       [ true, null ],
       [ false, null ],
       [ 'foo', 'foo' ],
