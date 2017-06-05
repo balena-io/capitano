@@ -770,13 +770,13 @@ _.each([
 
   ava.test(_.join([
     'toString:',
-    `should return ${testCase.string.unix} given`,
+    `should return ${testCase.expected.unix} given`,
     `optional=${testCase.option.optional}`,
     `type=${testCase.option.type}`,
     `aliases=${testCase.option.aliases.length}`
   ], ' '), (test) => {
     const option = new Option(testCase.option);
-    test.is(option.toString(), testCase.string.unix);
+    test.is(option.toString(), testCase.expected.unix);
   });
 
 });
