@@ -627,6 +627,38 @@ ava.test('isString: should allow a hyphened alias', (test) => {
   test.is(option.toString(), '--foo, --bar-baz <value>');
 });
 
+ava.test('getNames: should return the names of an option without aliases', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'string' ],
+    optional: false
+  });
+
+  test.deepEqual(Option.getNames(option), [ 'foo' ]);
+});
+
+ava.test('getNames: should return the names of an option with one alias', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'string' ],
+    aliases: [ 'bar' ],
+    optional: false
+  });
+
+  test.deepEqual(Option.getNames(option), [ 'foo', 'bar' ]);
+});
+
+ava.test('getNames: should return the names of an option with many aliases', (test) => {
+  const option = new Option({
+    name: 'foo',
+    type: [ 'string' ],
+    aliases: [ 'bar', 'baz' ],
+    optional: false
+  });
+
+  test.deepEqual(Option.getNames(option), [ 'foo', 'bar', 'baz' ]);
+});
+
 _.each([
   {
     option: {
