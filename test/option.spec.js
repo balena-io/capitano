@@ -918,7 +918,7 @@ _.each([
       optional: true
     },
     values: [
-      [ undefined, undefined ],
+      [ undefined, false ],
       [ '', null ],
       [ true, true ],
       [ false, false ],
