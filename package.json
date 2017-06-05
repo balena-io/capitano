@@ -21,6 +21,7 @@
     "nyc": "^10.3.2"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "generatorics": "^1.1.0",
     "lodash": "^4.17.4",
     "strip-indent": "^2.0.0"
