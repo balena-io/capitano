@@ -25,7 +25,8 @@ assert('greet: should great a person with a one word name', [
   stdout: [
     'Hello, John'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });
 
 assert('greet: should great a person with prefix exclamation option', [
@@ -36,7 +37,8 @@ assert('greet: should great a person with prefix exclamation option', [
   stdout: [
     'Hello, John!!!'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });
 
 assert('greet: should great a person with infix exclamation option', [
@@ -47,7 +49,8 @@ assert('greet: should great a person with infix exclamation option', [
   stdout: [
     'Hello, John!!!'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });
 
 assert('greet: should great a person with suffix exclamation option', [
@@ -58,7 +61,8 @@ assert('greet: should great a person with suffix exclamation option', [
   stdout: [
     'Hello, John!!!'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });
 
 assert('greet: should great a person with exclamation option alias', [
@@ -69,7 +73,8 @@ assert('greet: should great a person with exclamation option alias', [
   stdout: [
     'Hello, John!!!'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });
 
 assert('greet: should great a person without a name', [
@@ -78,7 +83,8 @@ assert('greet: should great a person without a name', [
   stdout: [
     'Hello, human'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });
 
 assert('greet: should great a person without a name with exclamation', [
@@ -88,5 +94,6 @@ assert('greet: should great a person without a name with exclamation', [
   stdout: [
     'Hello, human!!!'
   ],
-  stderr: []
+  stderr: [],
+  code: 0
 });

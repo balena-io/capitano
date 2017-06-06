@@ -25,7 +25,8 @@ assert('add: should add two positive integers', [
 ], {
   stdout: [],
   stderr: [],
-  result: 7
+  result: 7,
+  code: 0
 });
 
 assert('add: should add two positive floats', [
@@ -35,5 +36,26 @@ assert('add: should add two positive floats', [
 ], {
   stdout: [],
   stderr: [],
-  result: 11.49
+  result: 11.49,
+  code: 0
+});
+
+assert('add: should exit if x is > 100', [
+  'add',
+  '101',
+  '99'
+], {
+  stdout: [],
+  stderr: [ 'The numbers are too big!' ],
+  code: 1
+});
+
+assert('add: should exit if y is > 100', [
+  'add',
+  '99',
+  '101'
+], {
+  stdout: [],
+  stderr: [ 'The numbers are too big!' ],
+  code: 1
 });

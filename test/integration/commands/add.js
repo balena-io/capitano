@@ -34,6 +34,13 @@ module.exports = {
       }
     ]
   },
+  middlewares: [
+    (params) => {
+      if (params.x > 100 || params.y > 100) {
+        throw new Error('The numbers are too big!');
+      }
+    }
+  ],
   description: 'add two numbers',
   action: (params) => {
     return Promise.resolve(params.x + params.y);

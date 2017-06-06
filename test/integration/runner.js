@@ -31,9 +31,21 @@ module.exports = (name, args, expectations) => {
       path.join(__dirname, 'cli.js')
     ], args), (error, stdout, stderr) => {
       const lines = getLines(stdout);
-      test.deepEqual(error, null);
+
+      if (_.isError(error)) {
+        test.deepEqual(error.code, expectations.code);
+      } else {
+        test.deepEqual(expectations.code, 0);
+      }
+
       test.deepEqual(_.initial(lines), expectations.stdout);
-      test.deepEqual(JSON.parse(_.last(lines)).result, expectations.result);
+
+      if (_.isEmpty(lines)) {
+        test.deepEqual(expectations.result, undefined);
+      } else {
+        test.deepEqual(JSON.parse(_.last(lines)).result, expectations.result);
+      }
+
       test.deepEqual(getLines(stderr), expectations.stderr);
       test.end();
     });

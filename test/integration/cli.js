@@ -16,6 +16,7 @@
 
 'use strict';
 
+const _ = require('lodash');
 const capitano = require('../..');
 
 capitano.setCommand(require('./commands/greet'));
@@ -23,4 +24,8 @@ capitano.setCommand(require('./commands/add'));
 
 capitano.run(process.argv.slice(2)).then((result) => {
   console.log(JSON.stringify({ result }));
+}).catch((error) => {
+  console.error(error.message);
+  const exitCode = _.isNumber(error.code) ? error.code : 1;
+  process.exit(exitCode);
 });
