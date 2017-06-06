@@ -19,22 +19,23 @@
 const ava = require('ava');
 const _ = require('lodash');
 const path = require('path');
-const Bluebird = require('bluebird');
-const childProcess = Bluebird.promisifyAll(require('child_process'));
+const childProcess = require('child_process');
 
 module.exports = (name, args, expectations) => {
   const getLines = (string) => {
     return _.initial(_.split(string, '\n'));
   };
 
-  ava.test(`integration: ${name}`, (test) => {
-    return childProcess.execFileAsync('node', _.concat([
+  ava.test.cb(`integration: ${name}`, (test) => {
+    childProcess.execFile('node', _.concat([
       path.join(__dirname, 'cli.js')
-    ], args)).then((stdout, stderr) => {
+    ], args), (error, stdout, stderr) => {
       const lines = getLines(stdout);
+      test.deepEqual(error, null);
       test.deepEqual(_.initial(lines), expectations.stdout);
       test.deepEqual(JSON.parse(_.last(lines)).result, expectations.result);
       test.deepEqual(getLines(stderr), expectations.stderr);
+      test.end();
     });
   });
 };
