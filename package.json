@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "generatorics": "^1.1.0",
+    "is-elevated": "^2.0.1",
     "lodash": "^4.17.4",
     "strip-indent": "^2.0.0"
   }
