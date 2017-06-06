@@ -80,6 +80,18 @@ ava.test('tokenize: should tokenize a single boolean UNIX long option', (test) =
   ]);
 });
 
+ava.test('tokenize: should tokenize a single boolean multi-word UNIX long option', (test) => {
+  test.deepEqual(tokenizer.tokenize([ '--foo-bar-baz' ], {
+    mode: MODES.UNIX
+  }), [
+    {
+      index: 0,
+      type: tokenizer.TYPES.OPTION,
+      name: 'foo-bar-baz'
+    }
+  ]);
+});
+
 ava.test('tokenize: should tokenize a complex set of UNIX arguments', (test) => {
   test.deepEqual(tokenizer.tokenize([ 'flash', '-c', '--drive', '/dev/disk2', '-y' ], {
     mode: MODES.UNIX
