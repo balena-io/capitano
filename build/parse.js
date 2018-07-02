@@ -36,7 +36,10 @@ exports.parse = function(argv) {
   options = _.omit(output, '_');
   result = {};
   result.options = _.mapValues(options, function(value) {
-    if (/^\d+(\.\d+)?$/.test(value)) {
+    if (/^\d+$/.test(value)) {
+      return parseInt(value);
+    }
+    if (/^\d*\.\d+?$/.test(value)) {
       return parseFloat(value);
     }
     return value;
@@ -60,11 +63,12 @@ exports.split = function(string) {
   }
   regex = '';
   pair = function(arg) {
-    var end, start;
+    var end, middle, start;
     start = arg[0], end = arg[1];
     start = '\\' + start;
     end = '\\' + end;
-    return regex += start + "[^" + end + "]+" + end + "|";
+    middle = '\\\\' + end;
+    return regex += start + "(?:[^" + middle + "]|\\\\.)*" + end + "|";
   };
   pair('[]');
   pair('<>');

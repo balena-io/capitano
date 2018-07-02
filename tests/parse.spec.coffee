@@ -274,6 +274,16 @@ describe 'Parse:', ->
 			result = [ 'foo', 'hello world' ]
 			expect(parse.split(signature)).to.deep.equal(result)
 
+		it 'should split words with escaped double quotes and surrounded by double quotes correctly', ->
+			signature = 'foo "hello \\\"world\\\""'
+			result = [ 'foo', 'hello \\"world\\"' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
+		it 'should split words with escaped single quotes and surrounded by single quotes correctly', ->
+			signature = 'foo \'hello \\\'world\\\'\''
+			result = [ 'foo', 'hello \\\'world\\\'' ]
+			expect(parse.split(signature)).to.deep.equal(result)
+
 	describe '#parseOptions()', ->
 
 		it 'should not throw if options is undefined', ->

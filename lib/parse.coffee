@@ -53,7 +53,8 @@ exports.split = (string) ->
 	pair = ([ start, end ]) ->
 		start = '\\' + start
 		end = '\\' + end
-		regex += "#{start}[^#{end}]+#{end}|"
+		middle = '\\\\' + end
+		regex += "#{start}(?:[^#{middle}]|\\\\.)*#{end}|"
 
 	pair('[]')
 	pair('<>')
