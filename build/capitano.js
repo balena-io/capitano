@@ -54,7 +54,6 @@ exports.permission = function(name, permissionFunction) {
 
 exports.execute = function(args, callback) {
   return exports.state.getMatchCommand(args.command, function(error, command) {
-    var error1;
     if (error != null) {
       return typeof callback === "function" ? callback(error) : void 0;
     }
