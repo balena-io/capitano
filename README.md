@@ -432,6 +432,10 @@ $ gulp test
 
 ChangeLog
 ---------
+### 1.7.5
+
+- Cli: Parse escaped commands correctly
+- Add example default command
 
 ### 1.7.4
 
