@@ -136,7 +136,7 @@ module.exports = class Signature
 
 			if parameter.isVariadic()
 				parameterIndex = _.indexOf(@parameters, parameter)
-				value = _.rest(commandWords, parameterIndex).join(' ')
+				value = _.slice(commandWords, parameterIndex).join(' ')
 
 				if parameter.isOptional() and _.isEmpty(value)
 					return callback(null, result)

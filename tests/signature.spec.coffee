@@ -634,6 +634,31 @@ describe 'Signature:', ->
 						bar: 'hello world'
 					done()
 
+		describe 'given a multi-word signature with a variadic required parameter', ->
+
+			beforeEach ->
+				@signature = new Signature('foo bar <baz...>')
+
+			it 'should throw an error if prefix is different', (done) ->
+				@signature.compileParameters 'foo baz hello world', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(result).to.not.exist
+					done()
+
+			it 'should all parameters together if command exceeds', (done) ->
+				@signature.compileParameters 'foo bar hello world', (error, result) ->
+					expect(error).to.not.exist
+					expect(result).to.deep.equal
+						baz: 'hello world'
+					done()
+
+			it 'should throw an error if command misses the parameter', (done) ->
+				@signature.compileParameters 'foo bar', (error, result) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Missing baz')
+					expect(result).to.not.exist
+					done()
+
 		describe 'given a signature with a variadic optional parameter', ->
 
 			beforeEach ->
