@@ -432,6 +432,10 @@ $ gulp test
 
 ChangeLog
 ---------
+### 1.8.0
+
+- fix: Fix multi word variadic commands
+
 ### 1.7.5
 
 - Cli: Parse escaped commands correctly
