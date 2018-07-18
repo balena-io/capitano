@@ -49,7 +49,7 @@ module.exports = Parameter = (function() {
   };
 
   Parameter.prototype.isWord = function() {
-    return !_.any([this.isRequired(), this.isOptional()]);
+    return !_.some([this.isRequired(), this.isOptional()]);
   };
 
   Parameter.prototype.isMultiWord = function() {

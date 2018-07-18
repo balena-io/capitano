@@ -36,7 +36,7 @@ module.exports = class Parameter
 		return @_testRegex(REGEX_VARIADIC)
 
 	isWord: ->
-		return not _.any [
+		return not _.some [
 			@isRequired()
 			@isOptional()
 		]

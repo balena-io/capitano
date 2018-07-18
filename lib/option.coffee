@@ -47,7 +47,7 @@ module.exports = class Option
 
 	matches: (value) ->
 		return false if not value?
-		return not _.any [
+		return not _.some [
 			@boolean and not _.isBoolean(value)
 			not @boolean and _.isBoolean(value)
 		]

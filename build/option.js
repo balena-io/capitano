@@ -55,7 +55,7 @@ module.exports = Option = (function() {
     if (value == null) {
       return false;
     }
-    return !_.any([this.boolean && !_.isBoolean(value), !this.boolean && _.isBoolean(value)]);
+    return !_.some([this.boolean && !_.isBoolean(value), !this.boolean && _.isBoolean(value)]);
   };
 
   Option.prototype.toString = function() {

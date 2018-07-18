@@ -2,8 +2,6 @@ var Command, Option, Signature, _, parse, settings, state, utils;
 
 _ = require('lodash');
 
-_.str = require('underscore.string');
-
 parse = require('./parse');
 
 settings = require('./settings');
@@ -31,7 +29,11 @@ module.exports = Command = (function() {
       throw new Error('Invalid options');
     }
     this.options = [];
-    _.each(options.options, this.option, this);
+    _.forEach(options.options, (function(_this) {
+      return function(option) {
+        return _this.option(option);
+      };
+    })(this));
     _.extend(this, _.omit(options, 'options'));
   }
 

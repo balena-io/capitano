@@ -1,5 +1,4 @@
 _ = require('lodash')
-_.str = require('underscore.string')
 async = require('async')
 Parameter = require('./parameter')
 settings = require('./settings')
@@ -22,7 +21,8 @@ module.exports = class Signature
 
 		@parameters = []
 
-		_.each(parse.split(signature), @_addParameter, this)
+		_.forEach parse.split(signature), (word) =>
+			@_addParameter(word)
 
 		if @allowsStdin()
 			isStdin = (parameter) ->
@@ -49,15 +49,15 @@ module.exports = class Signature
 		@parameters.push(parameter)
 
 	hasParameters: ->
-		return _.any @parameters, (parameter) ->
+		return _.some @parameters, (parameter) ->
 			return not parameter.isWord()
 
 	hasVariadicParameters: ->
-		return _.any @parameters, (parameter) ->
+		return _.some @parameters, (parameter) ->
 			return parameter.isVariadic()
 
 	allowsStdin: ->
-		return _.any @parameters, (parameter) ->
+		return _.some @parameters, (parameter) ->
 			return parameter.allowsStdin()
 
 	toString: ->
@@ -67,7 +67,7 @@ module.exports = class Signature
 		return result.join(' ')
 
 	isWildcard: ->
-		return _.all [
+		return _.every [
 			@parameters.length is 1
 			@parameters[0].toString() is settings.signatures.wildcard
 		]
@@ -88,7 +88,7 @@ module.exports = class Signature
 		@compileParameters command, (error) ->
 			return callback(true) if not error?
 
-			if _.str.startsWith(error.message, 'Missing')
+			if _.startsWith(error.message, 'Missing')
 				return callback(true)
 			return callback(false)
 		, false

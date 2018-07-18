@@ -1,5 +1,4 @@
 _ = require('lodash')
-_.str = require('underscore.string')
 parse = require('./parse')
 settings = require('./settings')
 state = require('./state')
@@ -21,7 +20,9 @@ module.exports = class Command
 
 		@options = []
 
-		_.each(options.options, @option, this)
+		_.forEach options.options, (option) =>
+			@option(option)
+
 		_.extend(this, _.omit(options, 'options'))
 
 	applyPermissions: (callback) ->
