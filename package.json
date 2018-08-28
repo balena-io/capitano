@@ -24,7 +24,7 @@
     "prepublish": "gulp build"
   },
   "author": "Juan Cruz Viotti <juanchiviotti@gmail.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
     "chai": "~2.3.0",
     "coffee-script": "~1.9.2",
