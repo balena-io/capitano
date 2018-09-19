@@ -41,8 +41,8 @@
     "async": "^1.0.0",
     "get-stdin": "^4.0.1",
     "is-elevated": "^1.0.0",
-    "lodash": "~3.9.1",
-    "underscore.string": "~3.0.3",
+    "lodash": "~4.17.10",
+    "underscore.string": "~3.3.4",
     "yargs-parser": "^2.4.0"
   }
 }

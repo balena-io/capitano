@@ -2,8 +2,6 @@ var Parameter, Signature, _, appearedMoreThanOnce, async, isLastOne, parse, sett
 
 _ = require('lodash');
 
-_.str = require('underscore.string');
-
 async = require('async');
 
 Parameter = require('./parameter');
@@ -33,7 +31,11 @@ module.exports = Signature = (function() {
       throw new Error('Missing or invalid signature');
     }
     this.parameters = [];
-    _.each(parse.split(signature), this._addParameter, this);
+    _.forEach(parse.split(signature), (function(_this) {
+      return function(word) {
+        return _this._addParameter(word);
+      };
+    })(this));
     if (this.allowsStdin()) {
       isStdin = function(parameter) {
         return parameter.allowsStdin();
@@ -65,19 +67,19 @@ module.exports = Signature = (function() {
   };
 
   Signature.prototype.hasParameters = function() {
-    return _.any(this.parameters, function(parameter) {
+    return _.some(this.parameters, function(parameter) {
       return !parameter.isWord();
     });
   };
 
   Signature.prototype.hasVariadicParameters = function() {
-    return _.any(this.parameters, function(parameter) {
+    return _.some(this.parameters, function(parameter) {
       return parameter.isVariadic();
     });
   };
 
   Signature.prototype.allowsStdin = function() {
-    return _.any(this.parameters, function(parameter) {
+    return _.some(this.parameters, function(parameter) {
       return parameter.allowsStdin();
     });
   };
@@ -94,7 +96,7 @@ module.exports = Signature = (function() {
   };
 
   Signature.prototype.isWildcard = function() {
-    return _.all([this.parameters.length === 1, this.parameters[0].toString() === settings.signatures.wildcard]);
+    return _.every([this.parameters.length === 1, this.parameters[0].toString() === settings.signatures.wildcard]);
   };
 
   Signature.prototype.matches = function(command, callback) {
@@ -102,7 +104,7 @@ module.exports = Signature = (function() {
       if (error == null) {
         return callback(true);
       }
-      if (_.str.startsWith(error.message, 'Missing')) {
+      if (_.startsWith(error.message, 'Missing')) {
         return callback(true);
       }
       return callback(false);
