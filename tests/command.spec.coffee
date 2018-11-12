@@ -385,7 +385,7 @@ describe 'Command:', ->
 				expect(spy).to.have.been.calledOnce
 				done()
 
-		describe 'given an action that throws an error', ->
+		describe 'given a synchronous action that throws an error', ->
 
 			beforeEach ->
 				@command = new Command
@@ -397,6 +397,31 @@ describe 'Command:', ->
 				@command.execute command: 'hello', (error) ->
 					expect(error).to.be.an.instanceof(Error)
 					expect(error.message).to.equal('Command Error')
+					done()
+
+		describe 'given an asynchronous action that throws an error', ->
+
+			command = new Command
+				signature: new Signature('hello')
+				action: (params, parsedOptions, callback) ->
+					Promise.reject new Error 'Command Error (rejected promise)'
+
+			it 'should catch the error and send it to the callback', (done) ->
+				command.execute command: 'hello', (error) ->
+					expect(error).to.be.an.instanceof(Error)
+					expect(error.message).to.equal('Command Error (rejected promise)')
+					done()
+
+		describe 'given an asynchronous action that does not declare a callback', ->
+
+			command = new Command
+				signature: new Signature('hello')
+				action: (params, parsedOptions) ->
+					Promise.resolve 42
+
+			it 'should call the callback without arguments', (done) ->
+				command.execute command: 'hello', (value) ->
+					expect(value).not.to.exist
 					done()
 
 		describe 'given a command with the root property', ->

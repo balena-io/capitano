@@ -70,12 +70,28 @@ module.exports = class Command
 					return callback?(error) if error?
 
 					try
-						@action(params, parsedOptions, callback)
+						actionPromise = @action(params, parsedOptions, callback)
 					catch error
 						return callback?(error)
 
-					# Means the user is not declaring the callback
-					return callback?() if @action.length < 3
+					if callback?
+						if actionPromise?.then?
+							# Asynchronous action function
+							actionPromise.then(
+								# the value of a fulfilled promise is intentionally ignored because users are expected
+								# to call the callback themselves, and also for backwards compatibility.
+								# action.length < 3 means the `callback` argument is not declared in the action method.
+								(_value) => callback() if @action.length < 3
+
+								# call the callback if the promise is rejected (e.g. if an async action function throws
+								# an error), whether or not the user declared a callback as an argument to the action
+								# method. This is consistent with the existing implementation for synchronous action
+								# functions that throw an error.
+								callback)
+						else
+							# else: synchronous action function
+							# action.length < 3 means the `callback` argument is not declared in the action method.
+							callback() if @action.length < 3
 
 	option: (option) ->
 		if option not instanceof Option
