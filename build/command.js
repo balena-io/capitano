@@ -90,17 +90,28 @@ module.exports = Command = (function() {
             return typeof callback === "function" ? callback(error) : void 0;
           }
           return _this.applyPermissions(function(error) {
+            var actionPromise;
             if (error != null) {
               return typeof callback === "function" ? callback(error) : void 0;
             }
             try {
-              _this.action(params, parsedOptions, callback);
+              actionPromise = _this.action(params, parsedOptions, callback);
             } catch (error1) {
               error = error1;
               return typeof callback === "function" ? callback(error) : void 0;
             }
-            if (_this.action.length < 3) {
-              return typeof callback === "function" ? callback() : void 0;
+            if (callback != null) {
+              if ((actionPromise != null ? actionPromise.then : void 0) != null) {
+                return actionPromise.then(function(_value) {
+                  if (_this.action.length < 3) {
+                    return callback();
+                  }
+                }, callback);
+              } else {
+                if (_this.action.length < 3) {
+                  return callback();
+                }
+              }
             }
           });
         });
