@@ -163,6 +163,7 @@ module.exports = Signature = (function() {
         if (!parameter.isWord() && (word != null)) {
           if (/^\d+$/.test(word)) {
             result[parameterValue] = _.parseInt(word);
+            result[parameterValue + '_raw'] = word;
           } else {
             result[parameterValue] = word;
           }

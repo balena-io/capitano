@@ -313,6 +313,19 @@ An option parameter (optional).
 
 Defines whether an option is required. If the field is `true`, a generic error is thrown, otherwise you can set a custom error message by setting to a `string`.
 
+***
+
+### Integer parameter parsing
+
+Capitano will automatically call `parseInt` on parameters that consist of numbers only, like '0123'
+(matched against a regular expression). Sometimes this may not desirable, for example if leading
+zeroes must be preserved. If Capitano calls `parseInt` on a parameter, a copy of the original value
+is preserved under a parameter name with the added '\_raw' suffix. For example, if the original
+value of parameter `foo` was `'0123'`, `params.foo` will contain `123` (number type) and
+`params.foo_raw` will contain `'0123'` (string type).
+
+***
+
 Examples
 --------
 

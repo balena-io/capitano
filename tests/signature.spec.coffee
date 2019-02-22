@@ -694,10 +694,11 @@ describe 'Signature:', ->
 
 			it 'should parse the numbers automatically', (done) ->
 				signature = new Signature('foo <bar>')
-				signature.compileParameters 'foo 19', (error, result) ->
+				signature.compileParameters 'foo 019', (error, result) ->
 					expect(error).to.not.exist
 					expect(result).to.deep.equal
 						bar: 19
+						bar_raw: '019'
 					done()
 
 			it 'should match with a string that starts with a number', (done) ->
