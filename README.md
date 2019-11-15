@@ -100,7 +100,12 @@ Notice that you can only have **one** stdin command per signature, and it has to
 
 Function to call when the signature is matched. This function gets passed a parameter object, an options object and a `callback` to be called when the action is finished.
 
-If the `callback` argument is not declared in the action function, it'll be called implicitly, however in order to ensure Capitano works as expected, call the `callback` function if your action is async.
+If the `callback` argument is not declared in the action function, it'll be called implicitly.
+If this applies and the action function is asynchronous (returns a promise), Capitano will await
+for the promise to resolve (fulfilled or rejected) before calling the `callback`. To emphasize it,
+the callback must not be declared among the action function arguments in order for this behavior
+to apply. If the callback is declared, Capitano will not implicitly call it.
+
 Capitano uses the `action.length` property to determine whether the `action` function declares the `callback` argument.
 This doesn't work with [default function parameters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters),
 so please avoid using default parameters when implementing your `action` function.
