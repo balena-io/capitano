@@ -2,8 +2,6 @@ var Parameter, _, settings, state, yargsParser;
 
 _ = require('lodash');
 
-_.str = require('underscore.string');
-
 yargsParser = require('yargs-parser');
 
 settings = require('./settings');
@@ -77,8 +75,8 @@ exports.split = function(string) {
   regex += '\\S+';
   result = string.match(new RegExp(regex, 'g')) || [];
   return _.map(result, function(word) {
-    word = _.str.unquote(word, '\'');
-    word = _.str.unquote(word, '"');
+    word = word.replace(/^'(.*)'$/, '$1');
+    word = word.replace(/^"(.*)"$/, '$1');
     return word;
   });
 };

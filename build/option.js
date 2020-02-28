@@ -2,8 +2,6 @@ var Option, Signature, _, isValidAlias, parse;
 
 _ = require('lodash');
 
-_.str = require('underscore.string');
-
 parse = require('./parse');
 
 Signature = require('./signature');
@@ -66,7 +64,7 @@ module.exports = Option = (function() {
       }
       return "--" + signature;
     });
-    result = _.str.toSentence(signatures, ', ', ', ');
+    result = signatures.join(', ');
     if (this.parameter != null) {
       result += " <" + this.parameter + ">";
     }
