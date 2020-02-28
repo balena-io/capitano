@@ -1,5 +1,4 @@
 _ = require('lodash')
-_.str = require('underscore.string')
 chai = require('chai')
 expect = chai.expect
 parse = require('../lib/parse')

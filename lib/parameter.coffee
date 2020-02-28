@@ -1,5 +1,4 @@
 _ = require('lodash')
-_.str = require('underscore.string')
 parse = require('./parse')
 
 REGEX_REQUIRED = /^<(.*)>$/
@@ -80,6 +79,6 @@ module.exports = class Parameter
 		# we explicitly quote it back.
 		# https://github.com/resin-io/capitano/issues/4
 		if @isMultiWord() and @isWord()
-			return _.str.quote(@parameter)
+			return '"' + @parameter + '"'
 
 		return @parameter

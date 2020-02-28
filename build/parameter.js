@@ -2,8 +2,6 @@ var Parameter, REGEX_MULTIWORD, REGEX_OPTIONAL, REGEX_REQUIRED, REGEX_STDIN, REG
 
 _ = require('lodash');
 
-_.str = require('underscore.string');
-
 parse = require('./parse');
 
 REGEX_REQUIRED = /^<(.*)>$/;
@@ -113,7 +111,7 @@ module.exports = Parameter = (function() {
 
   Parameter.prototype.toString = function() {
     if (this.isMultiWord() && this.isWord()) {
-      return _.str.quote(this.parameter);
+      return '"' + this.parameter + '"';
     }
     return this.parameter;
   };

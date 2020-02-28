@@ -1,5 +1,4 @@
 _ = require('lodash')
-_.str = require('underscore.string')
 yargsParser = require('yargs-parser')
 settings = require('./settings')
 state = require('./state')
@@ -66,8 +65,8 @@ exports.split = (string) ->
 	result = string.match(new RegExp(regex, 'g')) or []
 
 	return _.map result, (word) ->
-		word = _.str.unquote(word, '\'')
-		word = _.str.unquote(word, '"')
+		word = word.replace(/^'(.*)'$/, '$1');
+		word = word.replace(/^"(.*)"$/, '$1');
 		return word
 
 exports.parseOptions = (definedOptions, options = {}) ->

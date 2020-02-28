@@ -1,5 +1,4 @@
 _ = require('lodash')
-_.str = require('underscore.string')
 parse = require('./parse')
 Signature = require('./signature')
 
@@ -57,6 +56,6 @@ module.exports = class Option
 			return "-#{signature}" if signature.length <= 1
 			return "--#{signature}"
 
-		result = _.str.toSentence(signatures, ', ', ', ')
+		result = signatures.join(', ')
 		result += " <#{@parameter}>" if @parameter?
 		return result
